@@ -2,6 +2,7 @@ import { Integration } from './types';
 import { ServiceNowIntegration } from './serviceNow';
 import { PagerDutyIntegration } from './pagerDuty';
 import { JiraIntegration } from './jira';
+import { SlackIntegration } from './slack';
 
 export function createIntegrations(): Record<string, Integration> {
   const integrations: Record<string, Integration> = {};
@@ -18,8 +19,12 @@ export function createIntegrations(): Record<string, Integration> {
     integrations.jira = new JiraIntegration();
   }
 
+  if (process.env.SLACK_TOKEN) {
+    integrations.slack = new SlackIntegration();
+  }
+
   return integrations;
 }
 
-export { ServiceNowIntegration, PagerDutyIntegration, JiraIntegration };
+export { ServiceNowIntegration, PagerDutyIntegration, JiraIntegration, SlackIntegration };
 export * from './types';

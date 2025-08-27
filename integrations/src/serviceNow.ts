@@ -1,4 +1,4 @@
-import { Integration, Incident, Action, ActionResponse } from './types';
+import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
 
 export class ServiceNowIntegration implements Integration {
   private endpoint: string;
@@ -19,6 +19,20 @@ export class ServiceNowIntegration implements Integration {
     // Mock API call
     console.log('ServiceNow createAction called with', item);
     return { success: true, message: 'ServiceNow action created' };
+  }
+
+  async fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]> {
+    // Mock API call
+    console.log(
+      `ServiceNow fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using ${this.endpoint}`
+    );
+    return [
+      {
+        source: 'ServiceNow',
+        timestamp: start.toISOString(),
+        description: 'ServiceNow event',
+      },
+    ];
   }
 }
 

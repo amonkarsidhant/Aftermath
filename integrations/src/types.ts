@@ -15,8 +15,16 @@ export interface ActionResponse {
   [key: string]: any;
 }
 
+export interface TimelineEvent {
+  source: string;
+  timestamp: string;
+  description: string;
+  [key: string]: any;
+}
+
 export interface Integration {
   fetchIncident(id: string): Promise<Incident>;
   createAction(item: Action): Promise<ActionResponse>;
+  fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]>;
 }
 
