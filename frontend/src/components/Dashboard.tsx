@@ -2,6 +2,7 @@ import { useState } from 'react';
 import IncidentsTab from './IncidentsTab';
 import ActionsTab from './ActionsTab';
 import MetricsTab from './MetricsTab';
+import PostmortemDetail from './PostmortemDetail';
 
 const tabs = ['Incidents', 'Postmortems', 'Actions', 'Metrics'] as const;
 type Tab = typeof tabs[number];
@@ -24,7 +25,15 @@ export default function Dashboard() {
       </nav>
       <div>
         {active === 'Incidents' && <IncidentsTab />}
-        {active === 'Postmortems' && <div>Postmortems content coming soon...</div>}
+        {active === 'Postmortems' && (
+          <PostmortemDetail
+            postmortem={{
+              title: 'Database outage',
+              incidentId: 'INC-001',
+              summary: 'Root cause and remediation details for the outage.',
+            }}
+          />
+        )}
         {active === 'Actions' && <ActionsTab />}
         {active === 'Metrics' && <MetricsTab />}
       </div>
