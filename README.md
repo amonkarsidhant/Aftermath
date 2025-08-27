@@ -36,7 +36,11 @@ Additional files:
    Key variables:
 
    - `PORT` – backend server port (default: 5000)
+   - `BACKEND_URL` – base URL for the backend (default: http://localhost:5000 in development)
+   - `FRONTEND_URL` – base URL for the frontend (default: http://localhost:3000 in development)
    - `JWT_SECRET` – secret for signing JSON Web Tokens
+
+   In development, the backend listens on port 5000 and the frontend on port 3000. Update these URLs if your production deployment uses different ports.
 
 ## Running locally
 
