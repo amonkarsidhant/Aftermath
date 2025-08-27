@@ -16,7 +16,19 @@ export async function fetchTimelineEvents(
 
   const res = await fetch(`/timeline?${params.toString()}`);
   if (!res.ok) {
-    throw new Error('Failed to fetch timeline events');
+    let message = 'Failed to fetch timeline events';
+    try {
+      const err = await res.json();
+      message = err.error || err.message || message;
+    } catch {
+      try {
+        const text = await res.text();
+        if (text) message = text;
+      } catch {
+        /* ignore */
+      }
+    }
+    throw new Error(message);
   }
   const data = await res.json();
   return data.events as TimelineEvent[];

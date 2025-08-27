@@ -6,6 +6,7 @@ export default function TimelineTab() {
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -16,9 +17,9 @@ export default function TimelineTab() {
         setEvents(data);
         const providers = Array.from(new Set(data.map((ev) => ev.source)));
         setSelectedProviders(providers);
+        setError(null);
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err);
+        setError(err instanceof Error ? err.message : String(err));
       }
     }
     load();
@@ -55,6 +56,11 @@ export default function TimelineTab() {
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div role="alert" className="p-2 bg-red-100 text-red-600 rounded">
+          {error}
+        </div>
+      )}
       <div className="flex flex-wrap gap-4 items-end">
         <div>
           <label className="block text-sm">Start</label>
