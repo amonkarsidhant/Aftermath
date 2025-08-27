@@ -37,10 +37,30 @@ describe('JiraIntegration', () => {
         source: 'Jira',
         timestamp: start.toISOString(),
         description: 'Jira event',
+        responder: {
+          id: 'jira-responder-1',
+          name: 'Jira Responder',
+          team: 'Engineering',
+          role: 'Developer',
+        },
       },
     ]);
     expect(logSpy).toHaveBeenCalledWith(
       `Jira fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://your-jira-instance.atlassian.net`
     );
+  });
+
+  it('fetchEvents uses configured endpoint when provided', async () => {
+    const start = new Date('2023-01-01T00:00:00Z');
+    const end = new Date('2023-01-02T00:00:00Z');
+    process.env.JIRA_ENDPOINT = 'https://custom-jira.example';
+    process.env.JIRA_TOKEN = 'custom-token';
+    const custom = new JiraIntegration();
+    await custom.fetchEvents(start, end);
+    expect(logSpy).toHaveBeenCalledWith(
+      `Jira fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom-jira.example`
+    );
+    delete process.env.JIRA_ENDPOINT;
+    delete process.env.JIRA_TOKEN;
   });
 });

@@ -31,6 +31,12 @@ export class PagerDutyIntegration implements Integration {
         source: 'PagerDuty',
         timestamp: start.toISOString(),
         description: 'PagerDuty event',
+        responder: {
+          id: 'pagerduty-responder-1',
+          name: 'PagerDuty Responder',
+          team: 'OnCall',
+          role: 'Responder',
+        },
       },
     ];
   }
