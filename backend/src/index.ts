@@ -5,6 +5,7 @@ import actions from './routes/actions';
 import metrics from './routes/metrics';
 import authRoutes from './routes/auth';
 import authMiddleware from './middleware/auth';
+import rbac from './middleware/rbac';
 import errorHandler from './middleware/errorHandler';
 import logger from './middleware/logger';
 
@@ -23,8 +24,8 @@ app.use(logger);
 app.use('/auth', authRoutes);
 app.use('/incidents', authMiddleware, incidents);
 app.use('/postmortems', authMiddleware, postmortems);
-app.use('/actions', authMiddleware, actions);
-app.use('/metrics', authMiddleware, metrics);
+app.use('/actions', authMiddleware, rbac(['admin']), actions);
+app.use('/metrics', authMiddleware, rbac(['admin']), metrics);
 
 app.use(errorHandler);
 
