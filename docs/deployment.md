@@ -24,7 +24,7 @@ services:
 
 ## Kubernetes
 
-A minimal deployment can be achieved by containerizing the services and applying Kubernetes manifests. Below is an example for the backend:
+A minimal deployment can be achieved by containerizing the services and applying Kubernetes manifests. Create a `Secret` containing the JWT value and reference it from the backend deployment:
 
 ```yaml
 apiVersion: apps/v1
@@ -46,7 +46,10 @@ spec:
           image: your-registry/aftermath-backend:latest
           env:
             - name: JWT_SECRET
-              value: replace-with-secure-value
+              valueFrom:
+                secretKeyRef:
+                  name: aftermath-jwt
+                  key: jwt
           ports:
             - containerPort: 3000
 ```
@@ -57,10 +60,16 @@ Expose the service using a `Service` or `Ingress` resource as appropriate for yo
 
 Helm charts for the backend and frontend are available under `deploy/helm`.
 
-Install the backend, providing the JWT secret:
+Create a `Secret` for the backend JWT value:
 
 ```bash
-helm install backend deploy/helm/backend --set secret.jwt=replace-with-secure-value
+kubectl create secret generic aftermath-jwt --from-literal=jwt=replace-with-secure-value
+```
+
+Install the backend, referencing the secret name:
+
+```bash
+helm install backend deploy/helm/backend --set secret.name=aftermath-jwt
 ```
 
 Install the frontend and set the API URL for the backend service:
@@ -70,3 +79,5 @@ helm install frontend deploy/helm/frontend --set env.apiUrl=http://backend:5000
 ```
 
 Use `--set` or a custom values file to override image tags, environment variables, and service ports.
+
+Both charts ship with a ServiceAccount, Role, and RoleBinding to grant minimal access to the Kubernetes API. Override `rbac.create=false` if you wish to supply your own RBAC resources.

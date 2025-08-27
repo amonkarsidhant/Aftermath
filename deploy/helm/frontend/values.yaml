@@ -5,3 +5,5 @@ service:
   port: 80
 env:
   apiUrl: "http://localhost:5000"
+rbac:
+  create: true
