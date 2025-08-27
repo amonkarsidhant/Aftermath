@@ -6,12 +6,19 @@ import validate from '../middleware/validate';
 
 const router = Router();
 
-// Example in-memory user. In a real app, replace with DB lookup.
+// Example in-memory users. In a real app, replace with DB lookup.
 const users = [
   {
     id: 1,
     username: 'admin',
-    passwordHash: bcrypt.hashSync('password', 10)
+    passwordHash: bcrypt.hashSync('password', 10),
+    role: 'admin'
+  },
+  {
+    id: 2,
+    username: 'user',
+    passwordHash: bcrypt.hashSync('password', 10),
+    role: 'user'
   }
 ];
 
@@ -33,9 +40,13 @@ router.post('/login', validate(loginSchema), async (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
-  const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET!, {
-    expiresIn: '1h'
-  });
+  const token = jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: '1h'
+    }
+  );
 
   res.json({ token });
 });

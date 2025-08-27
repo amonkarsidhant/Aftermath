@@ -1,6 +1,7 @@
 # Metrics API
 
 The `/metrics` endpoint exposes system and team performance statistics.
+It is restricted to users with the `admin` role.
 
 ```
 GET /metrics

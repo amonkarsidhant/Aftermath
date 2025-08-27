@@ -68,6 +68,12 @@ Set the connector credentials and API URLs in your `.env` file:
 
 The `JWT_SECRET` key is also required for authentication.
 
+## Roles
+
+JWT tokens include a `role` claim used for role-based access control.
+The sample backend defines `admin` and `user` roles. Endpoints like
+`/actions` and `/metrics` are limited to users with the `admin` role.
+
 ## Documentation
 
 - [Integration connectors](docs/integrations.md)
