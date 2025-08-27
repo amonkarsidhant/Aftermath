@@ -27,4 +27,20 @@ describe('PagerDutyIntegration', () => {
     expect(result).toEqual({ success: true, message: 'PagerDuty action created' });
     expect(logSpy).toHaveBeenCalledWith('PagerDuty createAction called with', action);
   });
+
+  it('fetchEvents returns timeline events and logs call', async () => {
+    const start = new Date('2023-01-01T00:00:00Z');
+    const end = new Date('2023-01-02T00:00:00Z');
+    const result = await integration.fetchEvents(start, end);
+    expect(result).toEqual([
+      {
+        source: 'PagerDuty',
+        timestamp: start.toISOString(),
+        description: 'PagerDuty event',
+      },
+    ]);
+    expect(logSpy).toHaveBeenCalledWith(
+      `PagerDuty fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://api.pagerduty.com`
+    );
+  });
 });

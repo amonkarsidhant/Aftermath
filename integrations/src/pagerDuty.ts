@@ -1,4 +1,4 @@
-import { Integration, Incident, Action, ActionResponse } from './types';
+import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
 
 export class PagerDutyIntegration implements Integration {
   private endpoint: string;
@@ -19,6 +19,20 @@ export class PagerDutyIntegration implements Integration {
     // Mock API call
     console.log('PagerDuty createAction called with', item);
     return { success: true, message: 'PagerDuty action created' };
+  }
+
+  async fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]> {
+    // Mock API call
+    console.log(
+      `PagerDuty fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using ${this.endpoint}`
+    );
+    return [
+      {
+        source: 'PagerDuty',
+        timestamp: start.toISOString(),
+        description: 'PagerDuty event',
+      },
+    ];
   }
 }
 

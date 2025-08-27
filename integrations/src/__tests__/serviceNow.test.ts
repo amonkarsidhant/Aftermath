@@ -27,4 +27,20 @@ describe('ServiceNowIntegration', () => {
     expect(result).toEqual({ success: true, message: 'ServiceNow action created' });
     expect(logSpy).toHaveBeenCalledWith('ServiceNow createAction called with', action);
   });
+
+  it('fetchEvents returns timeline events and logs call', async () => {
+    const start = new Date('2023-01-01T00:00:00Z');
+    const end = new Date('2023-01-02T00:00:00Z');
+    const result = await integration.fetchEvents(start, end);
+    expect(result).toEqual([
+      {
+        source: 'ServiceNow',
+        timestamp: start.toISOString(),
+        description: 'ServiceNow event',
+      },
+    ]);
+    expect(logSpy).toHaveBeenCalledWith(
+      `ServiceNow fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://example.service-now.com`
+    );
+  });
 });
