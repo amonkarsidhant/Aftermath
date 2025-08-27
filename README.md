@@ -33,6 +33,11 @@ Additional files:
    cp .env.example .env
    ```
 
+   Key variables:
+
+   - `PORT` – backend server port (default: 5000)
+   - `JWT_SECRET` – secret for signing JSON Web Tokens
+
 ## Running locally
 
 ### Backend
