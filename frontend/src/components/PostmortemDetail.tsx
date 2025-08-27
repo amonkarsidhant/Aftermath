@@ -23,6 +23,7 @@ export default function PostmortemDetail({ postmortem }: Props) {
   const [suggestions, setSuggestions] = useState<
     Partial<Record<keyof Narrative, string>>
   >({});
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -30,9 +31,9 @@ export default function PostmortemDetail({ postmortem }: Props) {
         const events: TimelineEvent[] = await fetchTimelineEvents();
         const gen = await generatePostmortemNarrative(events);
         setNarrative(gen);
+        setError(null);
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err);
+        setError(err instanceof Error ? err.message : String(err));
       }
     }
     load();
@@ -47,9 +48,9 @@ export default function PostmortemDetail({ postmortem }: Props) {
     try {
       const text = await rewriteBlameless(narrative[field]);
       setSuggestions((prev) => ({ ...prev, [field]: text }));
+      setError(null);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
+      setError(err instanceof Error ? err.message : String(err));
     }
   };
 
@@ -74,6 +75,14 @@ export default function PostmortemDetail({ postmortem }: Props) {
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div
+          role="alert"
+          className="p-2 bg-red-100 text-red-600 rounded"
+        >
+          {error}
+        </div>
+      )}
       <div
         id="postmortem-content"
         className="p-4 border border-neutral-200 dark:border-neutral-700 rounded bg-white dark:bg-neutral-800"
