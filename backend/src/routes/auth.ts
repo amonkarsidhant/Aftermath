@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+import validate from '../middleware/validate';
 
 const router = Router();
 
@@ -13,7 +15,12 @@ const users = [
   }
 ];
 
-router.post('/login', async (req, res) => {
+const loginSchema = z.object({
+  username: z.string(),
+  password: z.string()
+});
+
+router.post('/login', validate(loginSchema), async (req, res) => {
   const { username, password } = req.body;
   const user = users.find(u => u.username === username);
 
