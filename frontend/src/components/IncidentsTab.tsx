@@ -1,0 +1,33 @@
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { incidents } from '../mock/incidents';
+
+interface SeverityCount {
+  severity: string;
+  count: number;
+}
+
+const data: SeverityCount[] = incidents.reduce<SeverityCount[]>((acc, incident) => {
+  const found = acc.find((item) => item.severity === incident.severity);
+  if (found) {
+    found.count += 1;
+  } else {
+    acc.push({ severity: incident.severity, count: 1 });
+  }
+  return acc;
+}, []);
+
+export default function IncidentsTab() {
+  return (
+    <div className="w-full h-64">
+      <ResponsiveContainer>
+        <BarChart data={data}>
+          <XAxis dataKey="severity" />
+          <YAxis allowDecimals={false} />
+          <Tooltip />
+          <Bar dataKey="count" fill="#8884d8" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
