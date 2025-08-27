@@ -8,7 +8,7 @@ import authMiddleware from './middleware/auth';
 import errorHandler from './middleware/errorHandler';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT);
 
 app.use(express.json());
 
