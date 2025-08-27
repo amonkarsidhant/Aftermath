@@ -14,6 +14,7 @@ spec:
       labels:
         app: {{ .Release.Name }}-backend
     spec:
+      serviceAccountName: {{ if .Values.rbac.create }}{{ .Release.Name }}-backend{{ else }}default{{ end }}
       containers:
         - name: backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -23,7 +24,7 @@ spec:
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-backend-secret
-                  key: jwt
+                  name: {{ required "secret.name is required" .Values.secret.name }}
+                  key: {{ .Values.secret.key }}
           ports:
             - containerPort: {{ .Values.service.port }}

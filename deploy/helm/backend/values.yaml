@@ -6,4 +6,7 @@ service:
 env:
   port: 5000
 secret:
-  jwt: ""
+  name: ""
+  key: jwt
+rbac:
+  create: true
