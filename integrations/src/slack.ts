@@ -31,6 +31,12 @@ export class SlackIntegration implements Integration {
         source: 'Slack',
         timestamp: start.toISOString(),
         description: 'Slack event',
+        responder: {
+          id: 'slack-responder-1',
+          name: 'Slack Responder',
+          team: 'Support',
+          role: 'Agent',
+        },
       },
     ];
   }

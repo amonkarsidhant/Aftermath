@@ -31,6 +31,12 @@ export class ServiceNowIntegration implements Integration {
         source: 'ServiceNow',
         timestamp: start.toISOString(),
         description: 'ServiceNow event',
+        responder: {
+          id: 'servicenow-responder-1',
+          name: 'ServiceNow Responder',
+          team: 'ITSM',
+          role: 'Analyst',
+        },
       },
     ];
   }

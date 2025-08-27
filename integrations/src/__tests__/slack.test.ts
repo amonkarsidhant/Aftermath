@@ -37,10 +37,30 @@ describe('SlackIntegration', () => {
         source: 'Slack',
         timestamp: start.toISOString(),
         description: 'Slack event',
+        responder: {
+          id: 'slack-responder-1',
+          name: 'Slack Responder',
+          team: 'Support',
+          role: 'Agent',
+        },
       },
     ]);
     expect(logSpy).toHaveBeenCalledWith(
       `Slack fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://slack.com/api`
     );
+  });
+
+  it('fetchEvents uses configured endpoint when provided', async () => {
+    const start = new Date('2023-01-01T00:00:00Z');
+    const end = new Date('2023-01-02T00:00:00Z');
+    process.env.SLACK_ENDPOINT = 'https://custom.slack.api';
+    process.env.SLACK_TOKEN = 'custom-token';
+    const custom = new SlackIntegration();
+    await custom.fetchEvents(start, end);
+    expect(logSpy).toHaveBeenCalledWith(
+      `Slack fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom.slack.api`
+    );
+    delete process.env.SLACK_ENDPOINT;
+    delete process.env.SLACK_TOKEN;
   });
 });

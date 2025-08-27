@@ -37,10 +37,30 @@ describe('PagerDutyIntegration', () => {
         source: 'PagerDuty',
         timestamp: start.toISOString(),
         description: 'PagerDuty event',
+        responder: {
+          id: 'pagerduty-responder-1',
+          name: 'PagerDuty Responder',
+          team: 'OnCall',
+          role: 'Responder',
+        },
       },
     ]);
     expect(logSpy).toHaveBeenCalledWith(
       `PagerDuty fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://api.pagerduty.com`
     );
+  });
+
+  it('fetchEvents uses configured endpoint when provided', async () => {
+    const start = new Date('2023-01-01T00:00:00Z');
+    const end = new Date('2023-01-02T00:00:00Z');
+    process.env.PAGERDUTY_ENDPOINT = 'https://custom.pagerduty';
+    process.env.PAGERDUTY_TOKEN = 'custom-token';
+    const custom = new PagerDutyIntegration();
+    await custom.fetchEvents(start, end);
+    expect(logSpy).toHaveBeenCalledWith(
+      `PagerDuty fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom.pagerduty`
+    );
+    delete process.env.PAGERDUTY_ENDPOINT;
+    delete process.env.PAGERDUTY_TOKEN;
   });
 });

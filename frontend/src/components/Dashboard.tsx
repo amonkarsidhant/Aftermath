@@ -5,8 +5,9 @@ import MetricsTab from './MetricsTab';
 import PostmortemDetail, { Postmortem } from './PostmortemDetail';
 import PostmortemTable from './PostmortemTable';
 import TimelineTab from './TimelineTab';
+import CollaborationTab from './CollaborationTab';
 
-const tabs = ['Incidents', 'Postmortems', 'Actions', 'Metrics', 'Timeline'] as const;
+const tabs = ['Incidents', 'Postmortems', 'Actions', 'Metrics', 'Timeline', 'Collaboration'] as const;
 type Tab = typeof tabs[number];
 
 export default function Dashboard() {
@@ -44,6 +45,7 @@ export default function Dashboard() {
         {active === 'Actions' && <ActionsTab />}
         {active === 'Metrics' && <MetricsTab />}
         {active === 'Timeline' && <TimelineTab />}
+        {active === 'Collaboration' && <CollaborationTab />}
       </div>
     </div>
   );

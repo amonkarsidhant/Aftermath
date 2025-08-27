@@ -37,10 +37,30 @@ describe('ServiceNowIntegration', () => {
         source: 'ServiceNow',
         timestamp: start.toISOString(),
         description: 'ServiceNow event',
+        responder: {
+          id: 'servicenow-responder-1',
+          name: 'ServiceNow Responder',
+          team: 'ITSM',
+          role: 'Analyst',
+        },
       },
     ]);
     expect(logSpy).toHaveBeenCalledWith(
       `ServiceNow fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://example.service-now.com`
     );
+  });
+
+  it('fetchEvents uses configured endpoint when provided', async () => {
+    const start = new Date('2023-01-01T00:00:00Z');
+    const end = new Date('2023-01-02T00:00:00Z');
+    process.env.SERVICENOW_ENDPOINT = 'https://custom.servicenow';
+    process.env.SERVICENOW_TOKEN = 'custom-token';
+    const custom = new ServiceNowIntegration();
+    await custom.fetchEvents(start, end);
+    expect(logSpy).toHaveBeenCalledWith(
+      `ServiceNow fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom.servicenow`
+    );
+    delete process.env.SERVICENOW_ENDPOINT;
+    delete process.env.SERVICENOW_TOKEN;
   });
 });

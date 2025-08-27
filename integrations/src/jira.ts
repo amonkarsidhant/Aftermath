@@ -31,6 +31,12 @@ export class JiraIntegration implements Integration {
         source: 'Jira',
         timestamp: start.toISOString(),
         description: 'Jira event',
+        responder: {
+          id: 'jira-responder-1',
+          name: 'Jira Responder',
+          team: 'Engineering',
+          role: 'Developer',
+        },
       },
     ];
   }
