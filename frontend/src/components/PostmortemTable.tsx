@@ -89,7 +89,7 @@ export default function PostmortemTable({ onSelect }: Props) {
         <select
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value)}
-          className={`border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100`}
+          className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         >
           <option value="All">All Severities</option>
           <option value="Low">Low</option>
@@ -100,13 +100,13 @@ export default function PostmortemTable({ onSelect }: Props) {
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className={`border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100`}
+          className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         />
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className={`border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100`}
+          className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         />
       </div>
       <div className="overflow-x-auto">
