@@ -10,6 +10,12 @@ import errorHandler from './middleware/errorHandler';
 const app = express();
 const port = Number(process.env.PORT);
 
+if (!process.env.JWT_SECRET) {
+  // eslint-disable-next-line no-console
+  console.error('JWT_SECRET is not defined');
+  process.exit(1);
+}
+
 app.use(express.json());
 
 app.use('/auth', authRoutes);

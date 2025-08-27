@@ -14,7 +14,7 @@ export default function auth(req: AuthRequest, res: Response, next: NextFunction
   const [, token] = authHeader.split(' ');
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
     req.user = decoded;
     next();
   } catch (err) {
