@@ -78,11 +78,11 @@ export default function PostmortemTable() {
 
   return (
     <div className="space-y-4">
-      <div className="flex space-x-4">
+      <div className="flex flex-wrap gap-4">
         <select
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value)}
-          className="border rounded p-1"
+          className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         >
           <option value="All">All Severities</option>
           <option value="Low">Low</option>
@@ -93,23 +93,27 @@ export default function PostmortemTable() {
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="border rounded p-1"
+          className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         />
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className="border rounded p-1"
+          className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         />
       </div>
-      <table {...getTableProps()} className="min-w-full border">
+      <div className="overflow-x-auto">
+        <table
+          {...getTableProps()}
+          className="min-w-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded"
+        >
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
-                  className="border-b p-2 text-left cursor-pointer select-none"
+                  className="border-b border-neutral-300 dark:border-neutral-700 p-2 text-left cursor-pointer select-none bg-neutral-100 dark:bg-neutral-700"
                 >
                   {column.render('Header')}
                   <span>
@@ -128,9 +132,15 @@ export default function PostmortemTable() {
           {rows.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()} className="hover:bg-gray-50">
+              <tr
+                {...row.getRowProps()}
+                className="hover:bg-neutral-100 dark:hover:bg-neutral-700"
+              >
                 {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()} className="p-2 border-b">
+                  <td
+                    {...cell.getCellProps()}
+                    className="p-2 border-b border-neutral-200 dark:border-neutral-700"
+                  >
                     {cell.render('Cell')}
                   </td>
                 ))}
@@ -139,6 +149,7 @@ export default function PostmortemTable() {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

@@ -18,7 +18,7 @@ const data: SeverityCount[] = incidents.reduce<SeverityCount[]>((acc, incident) 
 
 export default function IncidentsTab() {
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-64 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded">
       <ResponsiveContainer>
         <BarChart data={data}>
           <XAxis dataKey="severity" />

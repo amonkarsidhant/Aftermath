@@ -3,7 +3,7 @@ import { mttrData } from '../mock/metrics';
 
 export default function MetricsTab() {
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-64 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded">
       <ResponsiveContainer>
         <LineChart data={mttrData}>
           <XAxis dataKey="date" />

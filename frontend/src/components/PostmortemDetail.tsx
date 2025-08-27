@@ -34,14 +34,17 @@ export default function PostmortemDetail({ postmortem }: Props) {
 
   return (
     <div className="space-y-4">
-      <div id="postmortem-content" className="p-4 border rounded">
+      <div
+        id="postmortem-content"
+        className="p-4 border border-neutral-200 dark:border-neutral-700 rounded bg-white dark:bg-neutral-800"
+      >
         <h2 className="text-xl font-semibold">{postmortem.title}</h2>
         <p>Incident ID: {postmortem.incidentId}</p>
         <p>{postmortem.summary}</p>
       </div>
       <button
         onClick={exportPdf}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
       >
         Export to PDF
       </button>
