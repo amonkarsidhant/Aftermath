@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import IncidentsTab from './IncidentsTab';
+import ActionsTab from './ActionsTab';
+import MetricsTab from './MetricsTab';
 
 const tabs = ['Incidents', 'Postmortems', 'Actions', 'Metrics'] as const;
 type Tab = typeof tabs[number];
@@ -20,10 +23,10 @@ export default function Dashboard() {
         ))}
       </nav>
       <div>
-        {active === 'Incidents' && <div>Incidents content coming soon...</div>}
+        {active === 'Incidents' && <IncidentsTab />}
         {active === 'Postmortems' && <div>Postmortems content coming soon...</div>}
-        {active === 'Actions' && <div>Actions content coming soon...</div>}
-        {active === 'Metrics' && <div>Metrics content coming soon...</div>}
+        {active === 'Actions' && <ActionsTab />}
+        {active === 'Metrics' && <MetricsTab />}
       </div>
     </div>
   );
