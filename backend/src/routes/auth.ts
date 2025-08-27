@@ -33,7 +33,7 @@ router.post('/login', validate(loginSchema), async (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
-  const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET || 'secret', {
+  const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET!, {
     expiresIn: '1h'
   });
 

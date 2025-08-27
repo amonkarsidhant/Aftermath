@@ -2,6 +2,8 @@
 
 This guide covers running Aftermath using Docker or Kubernetes.
 
+The backend requires a `JWT_SECRET` environment variable for signing JSON Web Tokens. The server exits during startup if it is missing.
+
 ## Docker Compose
 
 Use the provided `docker-compose.yml` to start the application locally:
@@ -10,7 +12,15 @@ Use the provided `docker-compose.yml` to start the application locally:
 docker compose up --build
 ```
 
-The command builds images for the backend, frontend, and integrations services and starts them with sensible defaults.
+The command builds images for the backend, frontend, and integrations services and starts them with sensible defaults. Ensure the `JWT_SECRET` variable is supplied to the backend service, for example:
+
+```yaml
+services:
+  backend:
+    environment:
+      - PORT=5000
+      - JWT_SECRET=replace-with-secure-value
+```
 
 ## Kubernetes
 
@@ -34,6 +44,9 @@ spec:
       containers:
         - name: backend
           image: your-registry/aftermath-backend:latest
+          env:
+            - name: JWT_SECRET
+              value: replace-with-secure-value
           ports:
             - containerPort: 3000
 ```
