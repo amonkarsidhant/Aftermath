@@ -2,7 +2,7 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-type Postmortem = {
+export type Postmortem = {
   title: string;
   incidentId: string;
   summary: string;
