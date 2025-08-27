@@ -58,3 +58,12 @@ Set the connector credentials and API URLs in your `.env` file:
 - `SERVICENOW_ENDPOINT` and `SERVICENOW_TOKEN`
 
 The `JWT_SECRET` key is also required for authentication.
+
+## Documentation
+
+- [Integration connectors](docs/integrations.md)
+- [Deployment guide](docs/deployment.md)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on coding standards, pull requests, and testing.
