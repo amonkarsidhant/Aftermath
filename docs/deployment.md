@@ -52,3 +52,21 @@ spec:
 ```
 
 Expose the service using a `Service` or `Ingress` resource as appropriate for your cluster.
+
+## Helm
+
+Helm charts for the backend and frontend are available under `deploy/helm`.
+
+Install the backend, providing the JWT secret:
+
+```bash
+helm install backend deploy/helm/backend --set secret.jwt=replace-with-secure-value
+```
+
+Install the frontend and set the API URL for the backend service:
+
+```bash
+helm install frontend deploy/helm/frontend --set env.apiUrl=http://backend:5000
+```
+
+Use `--set` or a custom values file to override image tags, environment variables, and service ports.

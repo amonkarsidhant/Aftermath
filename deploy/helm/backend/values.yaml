@@ -1,0 +1,9 @@
+image:
+  repository: backend
+  tag: latest
+service:
+  port: 5000
+env:
+  port: 5000
+secret:
+  jwt: ""
