@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { fetchTimelineEvents, TimelineEvent } from '../api/timeline';
+import {
+  generatePostmortemNarrative,
+  rewriteBlameless,
+  Narrative,
+} from '../ai/narrative';
 
 export type Postmortem = {
   title: string;
@@ -13,6 +19,40 @@ interface Props {
 }
 
 export default function PostmortemDetail({ postmortem }: Props) {
+  const [narrative, setNarrative] = useState<Narrative | null>(null);
+  const [suggestions, setSuggestions] = useState<
+    Partial<Record<keyof Narrative, string>>
+  >({});
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const events: TimelineEvent[] = await fetchTimelineEvents();
+        const gen = await generatePostmortemNarrative(events);
+        setNarrative(gen);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      }
+    }
+    load();
+  }, []);
+
+  const handleChange = (field: keyof Narrative, value: string) => {
+    setNarrative((prev) => (prev ? { ...prev, [field]: value } : prev));
+  };
+
+  const handleRewrite = async (field: keyof Narrative) => {
+    if (!narrative) return;
+    try {
+      const text = await rewriteBlameless(narrative[field]);
+      setSuggestions((prev) => ({ ...prev, [field]: text }));
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    }
+  };
+
   const exportPdf = async () => {
     const doc = new jsPDF();
     doc.text(postmortem.title, 10, 10);
@@ -41,6 +81,32 @@ export default function PostmortemDetail({ postmortem }: Props) {
         <h2 className="text-xl font-semibold">{postmortem.title}</h2>
         <p>Incident ID: {postmortem.incidentId}</p>
         <p>{postmortem.summary}</p>
+        {narrative && (
+          <div className="mt-4 space-y-4">
+            {(Object.keys(narrative) as (keyof Narrative)[]).map((phase) => (
+              <div key={phase} className="space-y-1">
+                <label className="block font-medium capitalize">{phase}</label>
+                <textarea
+                  value={narrative[phase]}
+                  onChange={(e) => handleChange(phase, e.target.value)}
+                  className="w-full border p-2 rounded"
+                />
+                {suggestions[phase] && (
+                  <p className="text-sm text-neutral-500">
+                    Suggestion: {suggestions[phase]}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleRewrite(phase)}
+                  className="text-sm text-primary underline"
+                >
+                  Rewrite blameless
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <button
         onClick={exportPdf}
