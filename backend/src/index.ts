@@ -6,6 +6,7 @@ import metrics from './routes/metrics';
 import authRoutes from './routes/auth';
 import authMiddleware from './middleware/auth';
 import errorHandler from './middleware/errorHandler';
+import logger from './middleware/logger';
 
 const app = express();
 const port = Number(process.env.PORT);
@@ -17,6 +18,7 @@ if (!process.env.JWT_SECRET) {
 }
 
 app.use(express.json());
+app.use(logger);
 
 app.use('/auth', authRoutes);
 app.use('/incidents', authMiddleware, incidents);
