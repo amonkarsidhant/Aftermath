@@ -1,18 +1,18 @@
 import React, { useMemo, useState } from 'react';
 import { useTable, useSortBy, Column } from 'react-table';
+import type { Postmortem } from './PostmortemDetail';
 
-type Postmortem = {
-  title: string;
-  incidentId: string;
+type TablePostmortem = Postmortem & {
   severity: string;
   status: string;
   createdAt: string;
 };
 
-const mockData: Postmortem[] = [
+const mockData: TablePostmortem[] = [
   {
     title: 'Database outage',
     incidentId: 'INC-001',
+    summary: 'Root cause and remediation details for the outage.',
     severity: 'High',
     status: 'Open',
     createdAt: '2024-05-01',
@@ -20,6 +20,7 @@ const mockData: Postmortem[] = [
   {
     title: 'API latency spike',
     incidentId: 'INC-002',
+    summary: 'Investigation into elevated API response times.',
     severity: 'Medium',
     status: 'Resolved',
     createdAt: '2024-05-10',
@@ -27,6 +28,7 @@ const mockData: Postmortem[] = [
   {
     title: 'Authentication bug',
     incidentId: 'INC-003',
+    summary: 'Issue with user authentication flow causing failures.',
     severity: 'Low',
     status: 'Open',
     createdAt: '2024-05-20',
@@ -34,13 +36,18 @@ const mockData: Postmortem[] = [
   {
     title: 'Network interruption',
     incidentId: 'INC-004',
+     summary: 'Brief network outage impacting services.',
     severity: 'High',
     status: 'Resolved',
     createdAt: '2024-06-01',
   },
 ];
 
-export default function PostmortemTable() {
+interface Props {
+  onSelect: (postmortem: Postmortem) => void;
+}
+
+export default function PostmortemTable({ onSelect }: Props) {
   const [severityFilter, setSeverityFilter] = useState<string>('All');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
@@ -55,7 +62,7 @@ export default function PostmortemTable() {
     });
   }, [severityFilter, startDate, endDate]);
 
-  const columns = useMemo<Column<Postmortem>[]>(
+  const columns = useMemo<Column<TablePostmortem>[]>(
     () => [
       { Header: 'Title', accessor: 'title' },
       { Header: 'Incident ID', accessor: 'incidentId' },
@@ -66,7 +73,7 @@ export default function PostmortemTable() {
     []
   );
 
-  const tableInstance = useTable<Postmortem>({ columns, data: filteredData }, useSortBy);
+  const tableInstance = useTable<TablePostmortem>({ columns, data: filteredData }, useSortBy);
 
   const {
     getTableProps,
@@ -134,7 +141,8 @@ export default function PostmortemTable() {
             return (
               <tr
                 {...row.getRowProps()}
-                className="hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                onClick={() => onSelect(row.original)}
+                className="hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
               >
                 {row.cells.map((cell: any) => (
                   <td

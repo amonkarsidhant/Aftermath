@@ -2,13 +2,16 @@ import { useState } from 'react';
 import IncidentsTab from './IncidentsTab';
 import ActionsTab from './ActionsTab';
 import MetricsTab from './MetricsTab';
-import PostmortemDetail from './PostmortemDetail';
+import PostmortemDetail, { Postmortem } from './PostmortemDetail';
+import PostmortemTable from './PostmortemTable';
 
 const tabs = ['Incidents', 'Postmortems', 'Actions', 'Metrics'] as const;
 type Tab = typeof tabs[number];
 
 export default function Dashboard() {
   const [active, setActive] = useState<Tab>('Incidents');
+  const [selectedPostmortem, setSelectedPostmortem] =
+    useState<Postmortem | null>(null);
 
   return (
     <div className="p-4">
@@ -30,13 +33,12 @@ export default function Dashboard() {
       <div>
         {active === 'Incidents' && <IncidentsTab />}
         {active === 'Postmortems' && (
-          <PostmortemDetail
-            postmortem={{
-              title: 'Database outage',
-              incidentId: 'INC-001',
-              summary: 'Root cause and remediation details for the outage.',
-            }}
-          />
+          <div className="space-y-4">
+            <PostmortemTable onSelect={(pm) => setSelectedPostmortem(pm)} />
+            {selectedPostmortem && (
+              <PostmortemDetail postmortem={selectedPostmortem} />
+            )}
+          </div>
         )}
         {active === 'Actions' && <ActionsTab />}
         {active === 'Metrics' && <MetricsTab />}
