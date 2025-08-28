@@ -22,7 +22,7 @@ const data: StatusCount[] = actions.reduce<StatusCount[]>(
 
 export default function ActionsTab() {
   return (
-    <div className="w-full h-64 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded">
+    <div className="w-full min-w-0 h-48 md:h-64 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded">
       <ResponsiveContainer>
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="status" fill="#82ca9d" label />

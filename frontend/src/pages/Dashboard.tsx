@@ -36,17 +36,29 @@ export default function Dashboard() {
         ))}
       </aside>
       <main className="flex-1 overflow-y-auto p-4">
-        {active === 'Incidents' && <IncidentsTab />}
+        {active === 'Incidents' && (
+          <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <IncidentsTab />
+          </div>
+        )}
         {active === 'Postmortems' && (
-          <div className="space-y-4">
+          <div className="max-w-screen-xl mx-auto space-y-4">
             <PostmortemSearch onSelect={(pm) => setSelectedPostmortem(pm)} />
             {selectedPostmortem && (
               <PostmortemDetail postmortem={selectedPostmortem} />
             )}
           </div>
         )}
-        {active === 'Actions' && <ActionsTab />}
-        {active === 'Metrics' && <MetricsTab />}
+        {active === 'Actions' && (
+          <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <ActionsTab />
+          </div>
+        )}
+        {active === 'Metrics' && (
+          <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <MetricsTab />
+          </div>
+        )}
       </main>
     </div>
   );
