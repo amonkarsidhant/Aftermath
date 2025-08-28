@@ -20,6 +20,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm install
       - run: npm test
+      - run: npm run e2e
 
   backend:
     name: Backend Tests
