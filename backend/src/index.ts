@@ -1,4 +1,7 @@
 import express from 'express';
+import path from 'path';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 import incidents from './routes/incidents';
 import postmortems from './routes/postmortems';
 import actions from './routes/actions';
@@ -27,6 +30,9 @@ if (!process.env.JWT_SECRET) {
 
 app.use(express.json());
 app.use(logger);
+
+const swaggerDocument = YAML.load(path.join(__dirname, '../openapi.yaml'));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/auth', authRoutes);
 app.use('/share', authMiddleware, shareRoutes);
