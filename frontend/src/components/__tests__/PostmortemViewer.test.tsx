@@ -5,9 +5,11 @@ import { loadActions } from '../../services/remediations';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { Postmortem } from '../../types';
+import { getPostmortemShareUrl } from '../../services/share';
 
 jest.mock('../../services/timeline');
 jest.mock('../../services/remediations');
+jest.mock('../../services/share', () => ({ getPostmortemShareUrl: jest.fn() }));
 
 jest.mock('jspdf', () => {
   return jest.fn().mockImplementation(() => ({
@@ -81,6 +83,25 @@ describe('PostmortemViewer', () => {
     await waitFor(() => {
       expect(html2canvas).toHaveBeenCalled();
       expect(saveMock).toHaveBeenCalled();
+    });
+  });
+
+  it('copies share link', async () => {
+    const pm: Postmortem = {
+      id: 1,
+      incidentId: '1',
+      title: 'Title',
+      summary: 'Summary',
+      tags: [],
+    };
+    (getPostmortemShareUrl as jest.Mock).mockResolvedValue('link');
+    Object.assign(navigator, { clipboard: { writeText: jest.fn() } });
+    render(<PostmortemViewer postmortem={pm} />);
+    const btn = await screen.findByRole('button', { name: /share/i });
+    fireEvent.click(btn);
+    await waitFor(() => {
+      expect(getPostmortemShareUrl).toHaveBeenCalledWith(1);
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('link');
     });
   });
 });

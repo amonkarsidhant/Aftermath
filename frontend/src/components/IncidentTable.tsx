@@ -5,6 +5,7 @@ import { useIncidents } from '../services/api';
 import LoadingSpinner from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage';
 import { exportElementToPDF, exportToCSV } from '../utils/export';
+import { getIncidentShareUrl } from '../services/share';
 
 interface Props {
   severityFilter?: string;
@@ -51,6 +52,19 @@ export default function IncidentTable({ severityFilter }: Props) {
       { Header: 'Severity', accessor: 'severity' },
       { Header: 'Status', accessor: 'status' },
       { Header: 'Date', accessor: 'date' },
+      {
+        Header: 'Share',
+        accessor: 'id',
+        Cell: ({ value }) => (
+          <button
+            type="button"
+            onClick={() => handleShare(value as number)}
+            className="underline text-primary"
+          >
+            Share
+          </button>
+        ),
+      },
     ],
     []
   );
@@ -66,6 +80,11 @@ export default function IncidentTable({ severityFilter }: Props) {
     state,
     setGlobalFilter,
   } = tableInstance;
+
+  const handleShare = async (id: number) => {
+    const url = await getIncidentShareUrl(id);
+    await navigator.clipboard.writeText(url);
+  };
 
   if (isLoading) {
     return <LoadingSpinner />;

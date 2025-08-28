@@ -4,6 +4,7 @@ import html2canvas from 'html2canvas';
 import type { Postmortem } from '../types';
 import { fetchTimelineEvents, TimelineEvent } from '../services/timeline';
 import { loadActions, Remediation } from '../services/remediations';
+import { getPostmortemShareUrl } from '../services/share';
 
 interface Props {
   postmortem: Postmortem;
@@ -39,6 +40,11 @@ export default function PostmortemViewer({ postmortem }: Props) {
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save(`${postmortem.incidentId}.pdf`);
+  };
+
+  const copyShareLink = async () => {
+    const url = await getPostmortemShareUrl(postmortem.id);
+    await navigator.clipboard.writeText(url);
   };
 
   return (
@@ -100,12 +106,20 @@ export default function PostmortemViewer({ postmortem }: Props) {
           <p>{postmortem.lessons || ''}</p>
         </section>
       </div>
-      <button
-        onClick={exportPdf}
-        className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
-      >
-        Export to PDF
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={copyShareLink}
+          className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded"
+        >
+          Share
+        </button>
+        <button
+          onClick={exportPdf}
+          className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
+        >
+          Export to PDF
+        </button>
+      </div>
     </div>
   );
 }
