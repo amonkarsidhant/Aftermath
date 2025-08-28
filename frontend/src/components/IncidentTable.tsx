@@ -2,13 +2,20 @@ import React, { useMemo, useState } from 'react';
 import { useTable, useGlobalFilter, Column } from 'react-table';
 import type { Incident } from '../types';
 import { useIncidents } from '../services/api';
+import LoadingSpinner from './LoadingSpinner';
+import ErrorMessage from './ErrorMessage';
 
 interface Props {
   severityFilter?: string;
 }
 
 export default function IncidentTable({ severityFilter }: Props) {
-  const { data: incidents = [] } = useIncidents();
+  const {
+    data: incidents = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useIncidents();
   const [severity, setSeverity] = useState('');
   const [service, setService] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -57,6 +64,19 @@ export default function IncidentTable({ severityFilter }: Props) {
     state,
     setGlobalFilter,
   } = tableInstance;
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (isError) {
+    return (
+      <ErrorMessage
+        message="Failed to load incidents"
+        onRetry={refetch}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">

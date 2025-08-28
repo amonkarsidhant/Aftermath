@@ -8,7 +8,12 @@ jest.mock('../../services/api', () => ({ useIncidents: jest.fn() }));
 
 describe('IncidentTable', () => {
   beforeEach(() => {
-    (useIncidents as jest.Mock).mockReturnValue({ data: mockIncidents });
+    (useIncidents as jest.Mock).mockReturnValue({
+      data: mockIncidents,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
   });
 
   it('renders all columns', () => {
