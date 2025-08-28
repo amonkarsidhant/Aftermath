@@ -1,38 +1,44 @@
+import nock from 'nock';
 import { SlackIntegration } from '../slack';
 
 describe('SlackIntegration', () => {
   let integration: SlackIntegration;
-  let logSpy: jest.SpyInstance;
 
   beforeEach(() => {
     integration = new SlackIntegration();
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    logSpy.mockRestore();
+    nock.cleanAll();
   });
 
-  it('fetchIncident returns expected incident and logs call', async () => {
+  it('fetchIncident requests incident and returns data', async () => {
+    const scope = nock('https://slack.com')
+      .get('/api/incidents/999')
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { id: '999', source: 'Slack' });
+
     const result = await integration.fetchIncident('999');
     expect(result).toEqual({ id: '999', source: 'Slack' });
-    expect(logSpy).toHaveBeenCalledWith(
-      'Slack fetchIncident called with id=999 using https://slack.com/api'
-    );
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('createAction returns success and logs call', async () => {
+  it('createAction posts action and returns response', async () => {
     const action = { type: 'test-action' };
+    const scope = nock('https://slack.com')
+      .post('/api/actions', action)
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { success: true, message: 'Slack action created' });
+
     const result = await integration.createAction(action);
     expect(result).toEqual({ success: true, message: 'Slack action created' });
-    expect(logSpy).toHaveBeenCalledWith('Slack createAction called with', action);
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('fetchEvents returns timeline events and logs call', async () => {
+  it('fetchEvents retrieves events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
-    const result = await integration.fetchEvents(start, end);
-    expect(result).toEqual([
+    const events = [
       {
         source: 'Slack',
         timestamp: start.toISOString(),
@@ -44,10 +50,16 @@ describe('SlackIntegration', () => {
           role: 'Agent',
         },
       },
-    ]);
-    expect(logSpy).toHaveBeenCalledWith(
-      `Slack fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://slack.com/api`
-    );
+    ];
+    const scope = nock('https://slack.com')
+      .get('/api/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, events);
+
+    const result = await integration.fetchEvents(start, end);
+    expect(result).toEqual(events);
+    expect(scope.isDone()).toBe(true);
   });
 
   it('fetchEvents uses configured endpoint when provided', async () => {
@@ -56,11 +68,17 @@ describe('SlackIntegration', () => {
     process.env.SLACK_ENDPOINT = 'https://custom.slack.api';
     process.env.SLACK_TOKEN = 'custom-token';
     const custom = new SlackIntegration();
+
+    const scope = nock('https://custom.slack.api')
+      .get('/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer custom-token')
+      .reply(200, []);
+
     await custom.fetchEvents(start, end);
-    expect(logSpy).toHaveBeenCalledWith(
-      `Slack fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom.slack.api`
-    );
+    expect(scope.isDone()).toBe(true);
     delete process.env.SLACK_ENDPOINT;
     delete process.env.SLACK_TOKEN;
   });
 });
+

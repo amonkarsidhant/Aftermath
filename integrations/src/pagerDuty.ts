@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
 
 export class PagerDutyIntegration implements Integration {
@@ -10,35 +11,28 @@ export class PagerDutyIntegration implements Integration {
   }
 
   async fetchIncident(id: string): Promise<Incident> {
-    // Mock API call
-    console.log(`PagerDuty fetchIncident called with id=${id} using ${this.endpoint}`);
-    return { id, source: 'PagerDuty' };
+    const { data } = await axios.get(`${this.endpoint}/incidents/${id}`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return data;
   }
 
   async createAction(item: Action): Promise<ActionResponse> {
-    // Mock API call
-    console.log('PagerDuty createAction called with', item);
-    return { success: true, message: 'PagerDuty action created' };
+    const { data } = await axios.post(`${this.endpoint}/actions`, item, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return data;
   }
 
   async fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]> {
-    // Mock API call
-    console.log(
-      `PagerDuty fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using ${this.endpoint}`
-    );
-    return [
-      {
-        source: 'PagerDuty',
-        timestamp: start.toISOString(),
-        description: 'PagerDuty event',
-        responder: {
-          id: 'pagerduty-responder-1',
-          name: 'PagerDuty Responder',
-          team: 'OnCall',
-          role: 'Responder',
-        },
+    const { data } = await axios.get(`${this.endpoint}/events`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+      params: {
+        start: start.toISOString(),
+        end: end.toISOString(),
       },
-    ];
+    });
+    return data;
   }
 }
 

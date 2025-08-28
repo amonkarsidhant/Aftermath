@@ -1,38 +1,44 @@
+import nock from 'nock';
 import { JiraIntegration } from '../jira';
 
 describe('JiraIntegration', () => {
   let integration: JiraIntegration;
-  let logSpy: jest.SpyInstance;
 
   beforeEach(() => {
     integration = new JiraIntegration();
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    logSpy.mockRestore();
+    nock.cleanAll();
   });
 
-  it('fetchIncident returns expected incident and logs call', async () => {
+  it('fetchIncident requests incident and returns data', async () => {
+    const scope = nock('https://your-jira-instance.atlassian.net')
+      .get('/incidents/789')
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { id: '789', source: 'Jira' });
+
     const result = await integration.fetchIncident('789');
     expect(result).toEqual({ id: '789', source: 'Jira' });
-    expect(logSpy).toHaveBeenCalledWith(
-      'Jira fetchIncident called with id=789 using https://your-jira-instance.atlassian.net'
-    );
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('createAction returns success and logs call', async () => {
+  it('createAction posts action and returns response', async () => {
     const action = { type: 'test-action' };
+    const scope = nock('https://your-jira-instance.atlassian.net')
+      .post('/actions', action)
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { success: true, message: 'Jira action created' });
+
     const result = await integration.createAction(action);
     expect(result).toEqual({ success: true, message: 'Jira action created' });
-    expect(logSpy).toHaveBeenCalledWith('Jira createAction called with', action);
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('fetchEvents returns timeline events and logs call', async () => {
+  it('fetchEvents retrieves events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
-    const result = await integration.fetchEvents(start, end);
-    expect(result).toEqual([
+    const events = [
       {
         source: 'Jira',
         timestamp: start.toISOString(),
@@ -44,10 +50,16 @@ describe('JiraIntegration', () => {
           role: 'Developer',
         },
       },
-    ]);
-    expect(logSpy).toHaveBeenCalledWith(
-      `Jira fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://your-jira-instance.atlassian.net`
-    );
+    ];
+    const scope = nock('https://your-jira-instance.atlassian.net')
+      .get('/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, events);
+
+    const result = await integration.fetchEvents(start, end);
+    expect(result).toEqual(events);
+    expect(scope.isDone()).toBe(true);
   });
 
   it('fetchEvents uses configured endpoint when provided', async () => {
@@ -56,11 +68,17 @@ describe('JiraIntegration', () => {
     process.env.JIRA_ENDPOINT = 'https://custom-jira.example';
     process.env.JIRA_TOKEN = 'custom-token';
     const custom = new JiraIntegration();
+
+    const scope = nock('https://custom-jira.example')
+      .get('/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer custom-token')
+      .reply(200, []);
+
     await custom.fetchEvents(start, end);
-    expect(logSpy).toHaveBeenCalledWith(
-      `Jira fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom-jira.example`
-    );
+    expect(scope.isDone()).toBe(true);
     delete process.env.JIRA_ENDPOINT;
     delete process.env.JIRA_TOKEN;
   });
 });
+

@@ -1,38 +1,44 @@
+import nock from 'nock';
 import { PagerDutyIntegration } from '../pagerDuty';
 
 describe('PagerDutyIntegration', () => {
   let integration: PagerDutyIntegration;
-  let logSpy: jest.SpyInstance;
 
   beforeEach(() => {
     integration = new PagerDutyIntegration();
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    logSpy.mockRestore();
+    nock.cleanAll();
   });
 
-  it('fetchIncident returns expected incident and logs call', async () => {
+  it('fetchIncident requests incident and returns data', async () => {
+    const scope = nock('https://api.pagerduty.com')
+      .get('/incidents/456')
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { id: '456', source: 'PagerDuty' });
+
     const result = await integration.fetchIncident('456');
     expect(result).toEqual({ id: '456', source: 'PagerDuty' });
-    expect(logSpy).toHaveBeenCalledWith(
-      'PagerDuty fetchIncident called with id=456 using https://api.pagerduty.com'
-    );
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('createAction returns success and logs call', async () => {
+  it('createAction posts action and returns response', async () => {
     const action = { type: 'test-action' };
+    const scope = nock('https://api.pagerduty.com')
+      .post('/actions', action)
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { success: true, message: 'PagerDuty action created' });
+
     const result = await integration.createAction(action);
     expect(result).toEqual({ success: true, message: 'PagerDuty action created' });
-    expect(logSpy).toHaveBeenCalledWith('PagerDuty createAction called with', action);
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('fetchEvents returns timeline events and logs call', async () => {
+  it('fetchEvents retrieves events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
-    const result = await integration.fetchEvents(start, end);
-    expect(result).toEqual([
+    const events = [
       {
         source: 'PagerDuty',
         timestamp: start.toISOString(),
@@ -44,10 +50,16 @@ describe('PagerDutyIntegration', () => {
           role: 'Responder',
         },
       },
-    ]);
-    expect(logSpy).toHaveBeenCalledWith(
-      `PagerDuty fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://api.pagerduty.com`
-    );
+    ];
+    const scope = nock('https://api.pagerduty.com')
+      .get('/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, events);
+
+    const result = await integration.fetchEvents(start, end);
+    expect(result).toEqual(events);
+    expect(scope.isDone()).toBe(true);
   });
 
   it('fetchEvents uses configured endpoint when provided', async () => {
@@ -56,11 +68,17 @@ describe('PagerDutyIntegration', () => {
     process.env.PAGERDUTY_ENDPOINT = 'https://custom.pagerduty';
     process.env.PAGERDUTY_TOKEN = 'custom-token';
     const custom = new PagerDutyIntegration();
+
+    const scope = nock('https://custom.pagerduty')
+      .get('/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer custom-token')
+      .reply(200, []);
+
     await custom.fetchEvents(start, end);
-    expect(logSpy).toHaveBeenCalledWith(
-      `PagerDuty fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom.pagerduty`
-    );
+    expect(scope.isDone()).toBe(true);
     delete process.env.PAGERDUTY_ENDPOINT;
     delete process.env.PAGERDUTY_TOKEN;
   });
 });
+

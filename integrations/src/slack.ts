@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
 
 export class SlackIntegration implements Integration {
@@ -10,34 +11,27 @@ export class SlackIntegration implements Integration {
   }
 
   async fetchIncident(id: string): Promise<Incident> {
-    // Mock API call
-    console.log(`Slack fetchIncident called with id=${id} using ${this.endpoint}`);
-    return { id, source: 'Slack' };
+    const { data } = await axios.get(`${this.endpoint}/incidents/${id}`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return data;
   }
 
   async createAction(item: Action): Promise<ActionResponse> {
-    // Mock API call
-    console.log('Slack createAction called with', item);
-    return { success: true, message: 'Slack action created' };
+    const { data } = await axios.post(`${this.endpoint}/actions`, item, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return data;
   }
 
   async fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]> {
-    // Mock API call
-    console.log(
-      `Slack fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using ${this.endpoint}`
-    );
-    return [
-      {
-        source: 'Slack',
-        timestamp: start.toISOString(),
-        description: 'Slack event',
-        responder: {
-          id: 'slack-responder-1',
-          name: 'Slack Responder',
-          team: 'Support',
-          role: 'Agent',
-        },
+    const { data } = await axios.get(`${this.endpoint}/events`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+      params: {
+        start: start.toISOString(),
+        end: end.toISOString(),
       },
-    ];
+    });
+    return data;
   }
 }

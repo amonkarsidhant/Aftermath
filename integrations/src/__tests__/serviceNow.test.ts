@@ -1,38 +1,44 @@
+import nock from 'nock';
 import { ServiceNowIntegration } from '../serviceNow';
 
 describe('ServiceNowIntegration', () => {
   let integration: ServiceNowIntegration;
-  let logSpy: jest.SpyInstance;
 
   beforeEach(() => {
     integration = new ServiceNowIntegration();
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    logSpy.mockRestore();
+    nock.cleanAll();
   });
 
-  it('fetchIncident returns expected incident and logs call', async () => {
+  it('fetchIncident requests incident and returns data', async () => {
+    const scope = nock('https://example.service-now.com')
+      .get('/incidents/123')
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { id: '123', source: 'ServiceNow' });
+
     const result = await integration.fetchIncident('123');
     expect(result).toEqual({ id: '123', source: 'ServiceNow' });
-    expect(logSpy).toHaveBeenCalledWith(
-      'ServiceNow fetchIncident called with id=123 using https://example.service-now.com'
-    );
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('createAction returns success and logs call', async () => {
+  it('createAction posts action and returns response', async () => {
     const action = { type: 'test-action' };
+    const scope = nock('https://example.service-now.com')
+      .post('/actions', action)
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { success: true, message: 'ServiceNow action created' });
+
     const result = await integration.createAction(action);
     expect(result).toEqual({ success: true, message: 'ServiceNow action created' });
-    expect(logSpy).toHaveBeenCalledWith('ServiceNow createAction called with', action);
+    expect(scope.isDone()).toBe(true);
   });
 
-  it('fetchEvents returns timeline events and logs call', async () => {
+  it('fetchEvents retrieves events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
-    const result = await integration.fetchEvents(start, end);
-    expect(result).toEqual([
+    const events = [
       {
         source: 'ServiceNow',
         timestamp: start.toISOString(),
@@ -44,10 +50,16 @@ describe('ServiceNowIntegration', () => {
           role: 'Analyst',
         },
       },
-    ]);
-    expect(logSpy).toHaveBeenCalledWith(
-      `ServiceNow fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://example.service-now.com`
-    );
+    ];
+    const scope = nock('https://example.service-now.com')
+      .get('/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, events);
+
+    const result = await integration.fetchEvents(start, end);
+    expect(result).toEqual(events);
+    expect(scope.isDone()).toBe(true);
   });
 
   it('fetchEvents uses configured endpoint when provided', async () => {
@@ -56,11 +68,17 @@ describe('ServiceNowIntegration', () => {
     process.env.SERVICENOW_ENDPOINT = 'https://custom.servicenow';
     process.env.SERVICENOW_TOKEN = 'custom-token';
     const custom = new ServiceNowIntegration();
+
+    const scope = nock('https://custom.servicenow')
+      .get('/events')
+      .query({ start: start.toISOString(), end: end.toISOString() })
+      .matchHeader('Authorization', 'Bearer custom-token')
+      .reply(200, []);
+
     await custom.fetchEvents(start, end);
-    expect(logSpy).toHaveBeenCalledWith(
-      `ServiceNow fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using https://custom.servicenow`
-    );
+    expect(scope.isDone()).toBe(true);
     delete process.env.SERVICENOW_ENDPOINT;
     delete process.env.SERVICENOW_TOKEN;
   });
 });
+
