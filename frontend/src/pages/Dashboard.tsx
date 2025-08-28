@@ -4,6 +4,7 @@ import ActionsTab from '../components/ActionsTab';
 import MetricsTab from '../components/MetricsTab';
 import PostmortemDetail from '../components/PostmortemDetail';
 import PostmortemSearch from '../components/PostmortemSearch';
+import ThemeToggle from '../components/ThemeToggle';
 import type { Postmortem } from '../types';
 const tabs = [
   'Incidents',
@@ -21,6 +22,9 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen">
       <aside className="flex flex-col w-56 border-r bg-neutral-50 dark:bg-neutral-900">
+        <div className="p-4 border-b">
+          <ThemeToggle />
+        </div>
         {tabs.map((tab) => (
           <button
             key={tab}
