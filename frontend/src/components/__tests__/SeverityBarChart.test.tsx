@@ -5,8 +5,14 @@ import SeverityBarChart from '../SeverityBarChart';
 import IncidentTable from '../IncidentTable';
 import { fetchIncidents } from '../../services/incidents';
 import mockIncidents from '../../utils/mock/incidents.json';
+import { exportElementToPDF, exportElementToPNG, exportToCSV } from '../../utils/export';
 
 jest.mock('../../services/incidents');
+jest.mock('../../utils/export', () => ({
+  exportElementToPDF: jest.fn(),
+  exportElementToPNG: jest.fn(),
+  exportToCSV: jest.fn(),
+}));
 
 function Wrapper() {
   const [severity, setSeverity] = useState<string | undefined>(undefined);
@@ -35,5 +41,21 @@ describe('SeverityBarChart', () => {
     const table = screen.getByRole('table');
     expect(within(table).getAllByRole('row')).toHaveLength(3);
     expect(within(table).queryByText('SEV-2')).toBeNull();
+  });
+
+  it('exports chart', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <SeverityBarChart onSelectSeverity={jest.fn()} />
+    );
+    await waitFor(() => {
+      expect(container.querySelectorAll('.recharts-bar-rectangle').length).toBeGreaterThan(0);
+    });
+    await user.click(screen.getByRole('button', { name: /export pdf/i }));
+    expect(exportElementToPDF).toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: /export png/i }));
+    expect(exportElementToPNG).toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: /export csv/i }));
+    expect(exportToCSV).toHaveBeenCalled();
   });
 });

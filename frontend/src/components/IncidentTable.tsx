@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { useTable, useGlobalFilter, Column } from 'react-table';
 import type { Incident } from '../types';
 import { useIncidents } from '../services/api';
 import LoadingSpinner from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage';
+import { exportElementToPDF, exportToCSV } from '../utils/export';
 
 interface Props {
   severityFilter?: string;
@@ -20,6 +21,7 @@ export default function IncidentTable({ severityFilter }: Props) {
   const [service, setService] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const tableRef = useRef<HTMLTableElement>(null);
 
   const severityOptions = useMemo(
     () => Array.from(new Set(incidents.map((i) => i.severity))),
@@ -131,8 +133,25 @@ export default function IncidentTable({ severityFilter }: Props) {
           className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         />
       </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() =>
+            tableRef.current && exportElementToPDF(tableRef.current, 'incidents.pdf')
+          }
+          className="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded"
+        >
+          Export PDF
+        </button>
+        <button
+          onClick={() => exportToCSV(data, 'incidents.csv')}
+          className="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded"
+        >
+          Export CSV
+        </button>
+      </div>
       <div className="overflow-x-auto">
         <table
+          ref={tableRef}
           {...getTableProps()}
           className="min-w-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded text-xs sm:text-sm"
         >

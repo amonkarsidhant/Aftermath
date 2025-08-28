@@ -3,8 +3,13 @@ import userEvent from '@testing-library/user-event';
 import IncidentTable from '../IncidentTable';
 import { useIncidents } from '../../services/api';
 import mockIncidents from '../../utils/mock/incidents.json';
+import { exportElementToPDF, exportToCSV } from '../../utils/export';
 
 jest.mock('../../services/api', () => ({ useIncidents: jest.fn() }));
+jest.mock('../../utils/export', () => ({
+  exportElementToPDF: jest.fn(),
+  exportToCSV: jest.fn(),
+}));
 
 describe('IncidentTable', () => {
   beforeEach(() => {
@@ -42,6 +47,16 @@ describe('IncidentTable', () => {
     const table = screen.getByRole('table');
     expect(within(table).getAllByRole('row')).toHaveLength(2);
     expect(within(table).getByText('6')).toBeInTheDocument();
+  });
+
+  it('exports data', async () => {
+    const user = userEvent.setup();
+    render(<IncidentTable />);
+    await screen.findByText('Auth');
+    await user.click(screen.getByRole('button', { name: /export pdf/i }));
+    expect(exportElementToPDF).toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: /export csv/i }));
+    expect(exportToCSV).toHaveBeenCalled();
   });
 });
 

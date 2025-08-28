@@ -3,6 +3,13 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import ActionStatusPieChart from '../ActionStatusPieChart';
 import ActionList from '../ActionList';
+import { exportElementToPDF, exportElementToPNG, exportToCSV } from '../../utils/export';
+
+jest.mock('../../utils/export', () => ({
+  exportElementToPDF: jest.fn(),
+  exportElementToPNG: jest.fn(),
+  exportToCSV: jest.fn(),
+}));
 
 function Wrapper() {
   const [status, setStatus] = useState<string | undefined>(undefined);
@@ -26,6 +33,17 @@ describe('ActionStatusPieChart', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(2);
     expect(within(list).queryByText(/In Progress/)).toBeNull();
     expect(within(list).queryByText(/Closed/)).toBeNull();
+  });
+
+  it('exports chart', async () => {
+    const user = userEvent.setup();
+    render(<ActionStatusPieChart onSelectStatus={jest.fn()} />);
+    await user.click(screen.getByRole('button', { name: /export pdf/i }));
+    expect(exportElementToPDF).toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: /export png/i }));
+    expect(exportElementToPNG).toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: /export csv/i }));
+    expect(exportToCSV).toHaveBeenCalled();
   });
 });
 
