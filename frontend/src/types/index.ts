@@ -35,3 +35,9 @@ export interface Postmortem {
   resolution?: string;
   lessons?: string;
 }
+
+export interface Summary {
+  sev1Count: number;
+  avgMttrHours: number;
+  slaPercent: number;
+}

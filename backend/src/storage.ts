@@ -3,7 +3,10 @@ export interface Incident {
   title: string;
   team: string;
   status: 'open' | 'closed';
+  severity: 1 | 2 | 3 | 4;
   createdAt: Date;
+  resolvedAt?: Date;
+  slaHours: number;
 }
 
 export interface Postmortem {
@@ -29,14 +32,19 @@ export const incidents: Incident[] = [
     title: 'Database outage',
     team: 'Database',
     status: 'closed',
-    createdAt: new Date('2024-05-01T10:00:00Z')
+    severity: 1,
+    createdAt: new Date('2024-05-01T10:00:00Z'),
+    resolvedAt: new Date('2024-05-01T12:00:00Z'),
+    slaHours: 4
   },
   {
     id: 2,
     title: 'Network issue',
     team: 'Networking',
     status: 'open',
-    createdAt: new Date('2024-05-03T12:00:00Z')
+    severity: 2,
+    createdAt: new Date('2024-05-03T12:00:00Z'),
+    slaHours: 8
   }
 ];
 

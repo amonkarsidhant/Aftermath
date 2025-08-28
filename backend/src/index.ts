@@ -3,6 +3,7 @@ import incidents from './routes/incidents';
 import postmortems from './routes/postmortems';
 import actions from './routes/actions';
 import metrics from './routes/metrics';
+import summary from './routes/summary';
 import authRoutes from './routes/auth';
 import authMiddleware from './middleware/auth';
 import rbac from './middleware/rbac';
@@ -29,6 +30,7 @@ app.use('/incidents', authMiddleware, incidents);
 app.use('/postmortems', authMiddleware, postmortems);
 app.use('/actions', authMiddleware, rbac(['admin']), actions);
 app.use('/metrics', authMiddleware, rbac(['admin']), metrics);
+app.use('/summary', authMiddleware, summary);
 
 const schema = buildSchema(`
   type Postmortem {
