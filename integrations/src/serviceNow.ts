@@ -32,7 +32,7 @@ export class ServiceNowIntegration implements Integration {
         end: end.toISOString(),
       },
     });
-    return data;
+    return (data as TimelineEvent[]).map((e) => ({ ...e, category: 'system' }));
   }
 }
 

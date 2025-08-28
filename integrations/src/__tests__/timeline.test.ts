@@ -2,7 +2,11 @@ import { collectTimelineEvents } from '../timeline';
 import { Integration, Incident, Action, ActionResponse, TimelineEvent } from '../types';
 
 class MockIntegration implements Integration {
-  constructor(private name: string, private offset: number) {}
+  constructor(
+    private name: string,
+    private offset: number,
+    private category: 'human' | 'system'
+  ) {}
   async fetchIncident(id: string): Promise<Incident> {
     return { id };
   }
@@ -15,6 +19,7 @@ class MockIntegration implements Integration {
         source: this.name,
         timestamp: new Date(start.getTime() + this.offset).toISOString(),
         description: `${this.name} event`,
+        category: this.category,
       },
     ];
   }
@@ -24,19 +29,21 @@ describe('collectTimelineEvents', () => {
   it('aggregates and sorts events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
-    const a = new MockIntegration('A', 2000);
-    const b = new MockIntegration('B', 1000);
+    const a = new MockIntegration('A', 2000, 'system');
+    const b = new MockIntegration('B', 1000, 'human');
     const events = await collectTimelineEvents(start, end, { a, b });
     expect(events).toEqual([
       {
         source: 'B',
         timestamp: new Date(start.getTime() + 1000).toISOString(),
         description: 'B event',
+        category: 'human',
       },
       {
         source: 'A',
         timestamp: new Date(start.getTime() + 2000).toISOString(),
         description: 'A event',
+        category: 'system',
       },
     ]);
   });

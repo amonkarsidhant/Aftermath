@@ -35,6 +35,7 @@ class SplunkIntegration implements Integration {
         source: 'Splunk',
         timestamp: start.toISOString(),
         description: 'Splunk event',
+        category: 'system',
       },
     ];
   }

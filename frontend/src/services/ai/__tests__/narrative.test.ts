@@ -21,6 +21,7 @@ describe('narrative helpers', () => {
         source: 'monitor',
         timestamp: '2024-01-01T00:00:00Z',
         description: 'Alert triggered',
+        category: 'system',
       },
     ];
     (fetch as jest.Mock).mockResolvedValue({
@@ -69,6 +70,7 @@ describe('narrative helpers', () => {
         source: 'monitor',
         timestamp: '2024-01-01T00:00:00Z',
         description: 'Alert triggered',
+        category: 'system',
       },
     ];
     (fetch as jest.Mock)

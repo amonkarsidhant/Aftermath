@@ -2,6 +2,7 @@ export interface TimelineEvent {
   source: string;
   timestamp: string;
   description: string;
+  category: 'human' | 'system';
 }
 
 import { config } from '../utils/config';
@@ -10,7 +11,8 @@ import mockEvents from '../utils/mock/timeline.json';
 export async function fetchTimelineEvents(
   start?: Date,
   end?: Date,
-  providers?: string[]
+  providers?: string[],
+  category?: 'human' | 'system'
 ): Promise<TimelineEvent[]> {
   if (config.useMockData) {
     let events = mockEvents as TimelineEvent[];
@@ -19,6 +21,9 @@ export async function fetchTimelineEvents(
     if (providers && providers.length) {
       events = events.filter((e) => providers.includes(e.source));
     }
+     if (category) {
+      events = events.filter((e) => e.category === category);
+    }
     return events;
   }
 
@@ -26,6 +31,7 @@ export async function fetchTimelineEvents(
   if (start) params.set('start', start.toISOString());
   if (end) params.set('end', end.toISOString());
   if (providers && providers.length) params.set('providers', providers.join(','));
+  if (category) params.set('category', category);
 
   const res = await fetch(`/timeline?${params.toString()}`);
   if (!res.ok) {

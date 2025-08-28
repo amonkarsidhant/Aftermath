@@ -4,6 +4,7 @@ import postmortems from './routes/postmortems';
 import actions from './routes/actions';
 import metrics from './routes/metrics';
 import summary from './routes/summary';
+import timeline from './routes/timeline';
 import authRoutes from './routes/auth';
 import authMiddleware from './middleware/auth';
 import shareRoutes from './routes/share';
@@ -34,6 +35,7 @@ app.use('/postmortems', shareAuth, postmortems);
 app.use('/actions', authMiddleware, rbac(['admin']), actions);
 app.use('/metrics', authMiddleware, rbac(['admin']), metrics);
 app.use('/summary', authMiddleware, summary);
+app.use('/timeline', shareAuth, timeline);
 
 const schema = buildSchema(`
   type Postmortem {

@@ -19,6 +19,7 @@ export interface TimelineEvent {
   source: string;
   timestamp: string;
   description: string;
+  category: 'human' | 'system';
   [key: string]: any;
 }
 
