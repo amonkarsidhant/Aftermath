@@ -1,22 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTable, useGlobalFilter, Column } from 'react-table';
 import type { Incident } from '../types';
-import { fetchIncidents } from '../services/incidents';
+import { useIncidents } from '../services/api';
 
 interface Props {
   severityFilter?: string;
 }
 
 export default function IncidentTable({ severityFilter }: Props) {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const { data: incidents = [] } = useIncidents();
   const [severity, setSeverity] = useState('');
   const [service, setService] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-
-  useEffect(() => {
-    fetchIncidents().then(setIncidents).catch(() => setIncidents([]));
-  }, []);
 
   const severityOptions = useMemo(
     () => Array.from(new Set(incidents.map((i) => i.severity))),
