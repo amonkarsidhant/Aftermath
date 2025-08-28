@@ -1,0 +1,47 @@
+exports[`TimelineTab snapshot matches snapshot 1`] = `
+<div class="space-y-4">
+  <div class="flex flex-wrap gap-4 items-end">
+    <div>
+      <label class="block text-sm">Start</label>
+      <input type="date" value="" class="border p-1 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm">End</label>
+      <input type="date" value="" class="border p-1 rounded" />
+    </div>
+    <div class="flex gap-2">
+      <label class="flex items-center gap-1">
+        <input type="checkbox" checked />
+        slack
+      </label>
+      <label class="flex items-center gap-1">
+        <input type="checkbox" checked />
+        pagerduty
+      </label>
+    </div>
+    <div class="flex gap-2">
+      <label class="flex items-center gap-1">
+        <input type="checkbox" checked />
+        Human
+      </label>
+      <label class="flex items-center gap-1">
+        <input type="checkbox" checked />
+        System
+      </label>
+    </div>
+  </div>
+  <div class="overflow-x-auto bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded p-4">
+    <svg height="300" class="w-full">
+      <line x1="50" y1="0" x2="50" y2="300" stroke="currentColor" />
+      <g transform="translate(50, 0)">
+        <circle r="5" fill="currentColor" />
+        <text x="10" y="5" class="text-sm">1/1/2024, 12:00:00 AM - slack: Slack event</text>
+      </g>
+      <g transform="translate(50, 300)">
+        <circle r="5" fill="currentColor" />
+        <text x="10" y="5" class="text-sm">1/1/2024, 1:00:00 AM - pagerduty: PagerDuty event</text>
+      </g>
+    </svg>
+  </div>
+</div>
+`;
