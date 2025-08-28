@@ -1,5 +1,4 @@
-import { act } from 'react-dom/test-utils';
-import { createRoot } from 'react-dom/client';
+import { render, screen } from '@testing-library/react';
 import PostmortemDetail from '../PostmortemDetail';
 import { fetchTimelineEvents } from '../../api/timeline';
 import { generatePostmortemNarrative } from '../../ai/narrative';
@@ -12,16 +11,30 @@ describe('PostmortemDetail', () => {
     (fetchTimelineEvents as jest.Mock).mockRejectedValue(new Error('timeline failed'));
     (generatePostmortemNarrative as jest.Mock).mockResolvedValue(null);
 
-    const container = document.createElement('div');
-    const root = createRoot(container);
-    await act(async () => {
-      root.render(
-        <PostmortemDetail
-          postmortem={{ title: 't', incidentId: '1', summary: 's' }}
-        />
-      );
+    render(
+      <PostmortemDetail
+        postmortem={{ title: 't', incidentId: '1', summary: 's' }}
+      />
+    );
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('timeline failed');
+  });
+
+  it('displays narrative when fetch succeeds', async () => {
+    (fetchTimelineEvents as jest.Mock).mockResolvedValue([]);
+    (generatePostmortemNarrative as jest.Mock).mockResolvedValue({
+      detection: 'det',
+      escalation: 'esc',
+      mitigation: 'mit',
+      resolution: 'res',
     });
-    expect(container.textContent).toContain('timeline failed');
-    root.unmount();
+
+    render(
+      <PostmortemDetail
+        postmortem={{ title: 't', incidentId: '1', summary: 's' }}
+      />
+    );
+
+    expect(await screen.findByDisplayValue('det')).toBeInTheDocument();
   });
 });
