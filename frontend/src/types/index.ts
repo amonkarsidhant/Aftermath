@@ -21,7 +21,7 @@ export interface Incident {
 
 export interface Action {
   id: number;
-  status: 'Open' | 'In Progress' | 'Completed';
+  status: 'Open' | 'In Progress' | 'Closed';
 }
 
 export interface Postmortem {
