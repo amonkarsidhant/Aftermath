@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import PostmortemDetail from '../PostmortemDetail';
 import { fetchTimelineEvents } from '../../services/timeline';
 import { generatePostmortemNarrative } from '../../services/ai/narrative';
+import type { Postmortem } from '../../types';
 
 jest.mock('../../services/timeline');
 jest.mock('../../services/ai/narrative');
@@ -11,11 +12,14 @@ describe('PostmortemDetail', () => {
     (fetchTimelineEvents as jest.Mock).mockRejectedValue(new Error('timeline failed'));
     (generatePostmortemNarrative as jest.Mock).mockResolvedValue(null);
 
-    render(
-      <PostmortemDetail
-        postmortem={{ id: 1, title: 't', incidentId: '1', summary: 's', tags: [] }}
-      />
-    );
+    const pm: Postmortem = {
+      id: 1,
+      title: 't',
+      incidentId: '1',
+      summary: 's',
+      tags: [],
+    };
+    render(<PostmortemDetail postmortem={pm} />);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('timeline failed');
   });
@@ -29,11 +33,14 @@ describe('PostmortemDetail', () => {
       resolution: 'res',
     });
 
-    render(
-      <PostmortemDetail
-        postmortem={{ id: 1, title: 't', incidentId: '1', summary: 's', tags: [] }}
-      />
-    );
+    const pm: Postmortem = {
+      id: 1,
+      title: 't',
+      incidentId: '1',
+      summary: 's',
+      tags: [],
+    };
+    render(<PostmortemDetail postmortem={pm} />);
 
     expect(await screen.findByDisplayValue('det')).toBeInTheDocument();
   });

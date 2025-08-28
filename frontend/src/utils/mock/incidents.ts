@@ -1,7 +1,4 @@
-export interface Incident {
-  id: number;
-  severity: 'Critical' | 'High' | 'Medium' | 'Low';
-}
+import type { Incident } from '../../types';
 
 export const incidents: Incident[] = [
   { id: 1, severity: 'Critical' },

@@ -1,20 +1,24 @@
 import { PieChart, Pie, Tooltip, ResponsiveContainer } from 'recharts';
 import { actions } from '../utils/mock/actions';
+import type { Action } from '../types';
 
 interface StatusCount {
   status: string;
   value: number;
 }
 
-const data: StatusCount[] = actions.reduce<StatusCount[]>((acc, action) => {
-  const found = acc.find((item) => item.status === action.status);
-  if (found) {
-    found.value += 1;
-  } else {
-    acc.push({ status: action.status, value: 1 });
-  }
-  return acc;
-}, []);
+const data: StatusCount[] = actions.reduce<StatusCount[]>(
+  (acc, action: Action) => {
+    const found = acc.find((item) => item.status === action.status);
+    if (found) {
+      found.value += 1;
+    } else {
+      acc.push({ status: action.status, value: 1 });
+    }
+    return acc;
+  },
+  []
+);
 
 export default function ActionsTab() {
   return (

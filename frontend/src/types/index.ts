@@ -11,6 +11,16 @@ export interface IncidentResponse {
   timestamp: string;
 }
 
+export interface Incident {
+  id: number;
+  severity: 'Critical' | 'High' | 'Medium' | 'Low';
+}
+
+export interface Action {
+  id: number;
+  status: 'Open' | 'In Progress' | 'Completed';
+}
+
 export interface Postmortem {
   id: number;
   incidentId: string;
