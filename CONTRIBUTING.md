@@ -25,3 +25,14 @@ cd integrations && npm test
 ```
 
 Pull requests should only be merged when the relevant tests pass.
+
+## Continuous Integration
+
+GitHub Actions runs frontend and backend test jobs on every push and pull request. These jobs install Node 18 dependencies, cache them for faster builds, and fail the pipeline if `npm test` exits with a non-zero status.
+
+Run the same checks locally before committing:
+
+```bash
+cd backend && npm test
+cd frontend && npm test
+```
