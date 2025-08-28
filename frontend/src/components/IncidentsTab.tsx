@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { incidents } from '../mock/incidents';
+import { incidents } from '../utils/mock/incidents';
 
 interface SeverityCount {
   severity: string;

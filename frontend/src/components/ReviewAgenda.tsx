@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AgendaNotes, loadAgenda, saveAgenda } from '../api/remediations';
+import { AgendaNotes, loadAgenda, saveAgenda } from '../services/remediations';
 
 export default function ReviewAgenda() {
   const [notes, setNotes] = useState<AgendaNotes>({

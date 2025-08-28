@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchTimelineEvents, TimelineEvent } from '../api/timeline';
+import { fetchTimelineEvents, TimelineEvent } from '../services/timeline';
 
 export default function TimelineTab() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);

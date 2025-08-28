@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import PostmortemSearch from '../PostmortemSearch';
-import { searchPostmortems } from '../../api/postmortems';
+import { searchPostmortems } from '../../services/postmortems';
 
-jest.mock('../../api/postmortems');
+jest.mock('../../services/postmortems');
 
 describe('PostmortemSearch', () => {
   it('renders results from search', async () => {

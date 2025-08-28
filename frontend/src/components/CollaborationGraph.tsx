@@ -10,7 +10,7 @@ import {
   Customized,
 } from 'recharts';
 import { Responder } from '../types';
-import { ResponderInteraction } from '../metrics/responders';
+import { ResponderInteraction } from '../utils/responders';
 
 interface Node extends Responder {
   x: number;

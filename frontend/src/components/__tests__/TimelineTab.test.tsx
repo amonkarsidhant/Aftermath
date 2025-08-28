@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import TimelineTab from '../TimelineTab';
-import { fetchTimelineEvents } from '../../api/timeline';
+import { fetchTimelineEvents } from '../../services/timeline';
 
-jest.mock('../../api/timeline');
+jest.mock('../../services/timeline');
 
 describe('TimelineTab', () => {
   it('renders error when fetch fails', async () => {

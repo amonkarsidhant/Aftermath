@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { searchPostmortems } from '../api/postmortems';
+import { searchPostmortems } from '../services/postmortems';
 import type { Postmortem } from '../types';
 
 interface Props {

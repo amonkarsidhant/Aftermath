@@ -3,7 +3,7 @@ import CollaborationGraph from './CollaborationGraph';
 import {
   calculateHeavyResponders,
   calculateCrossTeamInteractions,
-} from '../metrics/responders';
+} from '../utils/responders';
 import { Responder, IncidentResponse } from '../types';
 
 const mockResponders: Responder[] = [

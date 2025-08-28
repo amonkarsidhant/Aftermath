@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { fetchTimelineEvents, TimelineEvent } from '../api/timeline';
+import { fetchTimelineEvents, TimelineEvent } from '../services/timeline';
 import {
   generateBlamelessNarrative,
   Narrative,
-} from '../ai/narrative';
+} from '../services/ai/narrative';
 import type { Postmortem } from '../types';
 
 interface Props {
