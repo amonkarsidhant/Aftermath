@@ -23,6 +23,11 @@ describe('IncidentTable', () => {
     });
   });
 
+  it('matches snapshot', () => {
+    const { container } = render(<IncidentTable />);
+    expect(container).toMatchSnapshot();
+  });
+
   it('renders all columns', () => {
     render(<IncidentTable />);
     ['ID', 'Service', 'Severity', 'Status', 'Date', 'Share'].forEach((col) => {

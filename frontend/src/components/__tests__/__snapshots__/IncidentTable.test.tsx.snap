@@ -1,0 +1,90 @@
+exports[`IncidentTable matches snapshot 1`] = `
+<div class="space-y-4">
+  <div class="flex flex-wrap gap-2">
+    <input value="" placeholder="Search incidents" aria-label="Search" class="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100" />
+    <select aria-label="Severity" class="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100">
+      <option value="">All Severities</option>
+      <option value="SEV-1">SEV-1</option>
+      <option value="SEV-2">SEV-2</option>
+      <option value="SEV-3">SEV-3</option>
+    </select>
+    <select aria-label="Service" class="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100">
+      <option value="">All Services</option>
+      <option value="Auth">Auth</option>
+      <option value="Payments">Payments</option>
+      <option value="Search">Search</option>
+      <option value="Orders">Orders</option>
+    </select>
+    <input type="date" value="" aria-label="Start date" class="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100" />
+    <input type="date" value="" aria-label="End date" class="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100" />
+  </div>
+  <div class="flex gap-2">
+    <button class="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded">Export PDF</button>
+    <button class="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded">Export CSV</button>
+  </div>
+  <div class="overflow-x-auto">
+    <table role="table" class="min-w-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded text-xs sm:text-sm">
+      <thead>
+        <tr>
+          <th class="border-b border-neutral-300 dark:border-neutral-700 p-2 text-left bg-neutral-100 dark:bg-neutral-700">ID</th>
+          <th class="border-b border-neutral-300 dark:border-neutral-700 p-2 text-left bg-neutral-100 dark:bg-neutral-700">Service</th>
+          <th class="border-b border-neutral-300 dark:border-neutral-700 p-2 text-left bg-neutral-100 dark:bg-neutral-700">Severity</th>
+          <th class="border-b border-neutral-300 dark:border-neutral-700 p-2 text-left bg-neutral-100 dark:bg-neutral-700">Status</th>
+          <th class="border-b border-neutral-300 dark:border-neutral-700 p-2 text-left bg-neutral-100 dark:bg-neutral-700">Date</th>
+          <th class="border-b border-neutral-300 dark:border-neutral-700 p-2 text-left bg-neutral-100 dark:bg-neutral-700">Share</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+          <td class="p-2">1</td>
+          <td class="p-2">Auth</td>
+          <td class="p-2">SEV-1</td>
+          <td class="p-2">Resolved</td>
+          <td class="p-2">2024-01-01</td>
+          <td class="p-2"><button type="button" class="underline text-primary">Share</button></td>
+        </tr>
+        <tr class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+          <td class="p-2">2</td>
+          <td class="p-2">Payments</td>
+          <td class="p-2">SEV-2</td>
+          <td class="p-2">Open</td>
+          <td class="p-2">2024-01-15</td>
+          <td class="p-2"><button type="button" class="underline text-primary">Share</button></td>
+        </tr>
+        <tr class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+          <td class="p-2">3</td>
+          <td class="p-2">Search</td>
+          <td class="p-2">SEV-3</td>
+          <td class="p-2">In Progress</td>
+          <td class="p-2">2024-02-10</td>
+          <td class="p-2"><button type="button" class="underline text-primary">Share</button></td>
+        </tr>
+        <tr class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+          <td class="p-2">4</td>
+          <td class="p-2">Auth</td>
+          <td class="p-2">SEV-3</td>
+          <td class="p-2">Resolved</td>
+          <td class="p-2">2024-03-05</td>
+          <td class="p-2"><button type="button" class="underline text-primary">Share</button></td>
+        </tr>
+        <tr class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+          <td class="p-2">5</td>
+          <td class="p-2">Orders</td>
+          <td class="p-2">SEV-2</td>
+          <td class="p-2">Open</td>
+          <td class="p-2">2024-04-20</td>
+          <td class="p-2"><button type="button" class="underline text-primary">Share</button></td>
+        </tr>
+        <tr class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+          <td class="p-2">6</td>
+          <td class="p-2">Payments</td>
+          <td class="p-2">SEV-1</td>
+          <td class="p-2">Resolved</td>
+          <td class="p-2">2024-05-18</td>
+          <td class="p-2"><button type="button" class="underline text-primary">Share</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
