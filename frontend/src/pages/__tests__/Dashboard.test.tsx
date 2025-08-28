@@ -9,10 +9,6 @@ import type { Postmortem } from '../../types';
 jest.mock('../../components/IncidentsTab', () => () => <div>IncidentsTab</div>);
 jest.mock('../../components/ActionsTab', () => () => <div>ActionsTab</div>);
 jest.mock('../../components/MetricsTab', () => () => <div>MetricsTab</div>);
-jest.mock('../../components/TimelineTab', () => () => <div>TimelineTab</div>);
-jest.mock('../../components/CollaborationTab', () => () => <div>CollaborationTab</div>);
-jest.mock('../../components/ReviewAgenda', () => () => <div>ReviewAgenda</div>);
-jest.mock('../../components/RemediationActions', () => () => <div>RemediationActions</div>);
 
 jest.mock('../../services/timeline');
 jest.mock('../../services/ai/narrative');
@@ -41,7 +37,7 @@ describe('Dashboard', () => {
     const user = userEvent.setup();
     render(<Dashboard />);
 
-    await user.click(screen.getByText('Postmortems'));
+    await user.click(screen.getByRole('button', { name: 'Postmortems' }));
     const row = await screen.findByText('Database outage');
     await user.click(row);
 
