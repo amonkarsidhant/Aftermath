@@ -1,4 +1,6 @@
-import pool from '../db';
+import { Pool } from 'pg';
+
+const pool = new Pool();
 
 export interface Incident {
   id: number;
