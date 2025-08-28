@@ -49,6 +49,7 @@ describe('PagerDutyIntegration', () => {
           team: 'OnCall',
           role: 'Responder',
         },
+        category: 'system',
       },
     ];
     const scope = nock('https://api.pagerduty.com')
