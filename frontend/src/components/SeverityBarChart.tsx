@@ -1,7 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { incidents } from '../utils/mock/incidents';
 import type { Incident } from '../types';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { fetchIncidents } from '../services/incidents';
 
 interface Props {
   onSelectSeverity: (sev: string) => void;
@@ -13,8 +13,14 @@ interface SeverityCount {
 }
 
 export default function SeverityBarChart({ onSelectSeverity }: Props) {
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+
+  useEffect(() => {
+    fetchIncidents().then(setIncidents).catch(() => setIncidents([]));
+  }, []);
+
   const data = useMemo(() => {
-    return incidents.reduce<SeverityCount[]>((acc, incident: Incident) => {
+    return incidents.reduce<SeverityCount[]>((acc, incident) => {
       const found = acc.find((item) => item.severity === incident.severity);
       if (found) {
         found.count += 1;
@@ -23,7 +29,7 @@ export default function SeverityBarChart({ onSelectSeverity }: Props) {
       }
       return acc;
     }, []);
-  }, []);
+  }, [incidents]);
 
   const colorMap: Record<string, string> = {
     'SEV-1': '#ef4444',

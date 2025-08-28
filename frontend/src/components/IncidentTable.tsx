@@ -1,25 +1,30 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useGlobalFilter, Column } from 'react-table';
 import type { Incident } from '../types';
-import { incidents } from '../utils/mock/incidents';
+import { fetchIncidents } from '../services/incidents';
 
 interface Props {
   severityFilter?: string;
 }
 
 export default function IncidentTable({ severityFilter }: Props) {
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [severity, setSeverity] = useState('');
   const [service, setService] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
+  useEffect(() => {
+    fetchIncidents().then(setIncidents).catch(() => setIncidents([]));
+  }, []);
+
   const severityOptions = useMemo(
     () => Array.from(new Set(incidents.map((i) => i.severity))),
-    []
+    [incidents]
   );
   const serviceOptions = useMemo(
     () => Array.from(new Set(incidents.map((i) => i.service))),
-    []
+    [incidents]
   );
 
   const currentSeverity = severityFilter ?? severity;
@@ -32,7 +37,7 @@ export default function IncidentTable({ severityFilter }: Props) {
       if (endDate && new Date(i.date) > new Date(endDate)) return false;
       return true;
     });
-  }, [currentSeverity, service, startDate, endDate]);
+  }, [incidents, currentSeverity, service, startDate, endDate]);
 
   const columns = useMemo<Column<Incident>[]>(
     () => [
