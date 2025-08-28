@@ -4,6 +4,7 @@ import Dashboard from '../Dashboard';
 import { fetchTimelineEvents } from '../../services/timeline';
 import { generatePostmortemNarrative } from '../../services/ai/narrative';
 import { searchPostmortems } from '../../services/postmortems';
+import type { Postmortem } from '../../types';
 
 jest.mock('../../components/IncidentsTab', () => () => <div>IncidentsTab</div>);
 jest.mock('../../components/ActionsTab', () => () => <div>ActionsTab</div>);
@@ -26,9 +27,16 @@ describe('Dashboard', () => {
       mitigation: '',
       resolution: '',
     });
-    (searchPostmortems as jest.Mock).mockResolvedValue([
-      { id: 1, title: 'Database outage', incidentId: 'INC-001', summary: '', tags: ['database'] },
-    ]);
+    const mockResults: Postmortem[] = [
+      {
+        id: 1,
+        title: 'Database outage',
+        incidentId: 'INC-001',
+        summary: '',
+        tags: ['database'],
+      },
+    ];
+    (searchPostmortems as jest.Mock).mockResolvedValue(mockResults);
 
     const user = userEvent.setup();
     render(<Dashboard />);

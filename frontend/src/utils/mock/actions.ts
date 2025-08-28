@@ -1,7 +1,4 @@
-export interface Action {
-  id: number;
-  status: 'Open' | 'In Progress' | 'Completed';
-}
+import type { Action } from '../../types';
 
 export const actions: Action[] = [
   { id: 1, status: 'Open' },
