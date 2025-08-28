@@ -10,6 +10,15 @@ This repository contains the core code for the Aftermath project.
 - `plugins/` – Community-driven integrations
 - `docs/` – Documentation and API references
 
+## Architecture Overview
+
+The project is split into a frontend and a backend.
+
+- **Backend**: An Express server offers REST endpoints for incidents, postmortems, actions and metrics. It protects routes with JSON Web Tokens and role checks. A small `/graphql` endpoint lets clients search postmortems.
+- **Frontend**: A React app built with Vite. The main `App` component shows a dashboard with tabs for Incidents, Postmortems, Actions, Metrics, Timeline and more. Data-fetching helpers keep API calls in one place.
+- **Integrations**: Connectors for services like ServiceNow, PagerDuty and JIRA help the app talk to external tools.
+- **Plugins**: A plugins folder lets the community add extra features or integrations.
+
 Additional files:
 
 - `.env.example` – Example environment variables for APIs
