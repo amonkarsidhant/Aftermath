@@ -49,8 +49,8 @@ app.use('/auth', authRoutes);
 app.use('/share', authMiddleware, shareRoutes);
 app.use('/incidents', shareAuth, incidents);
 app.use('/postmortems', shareAuth, postmortems);
-app.use('/actions', authMiddleware, rbac(['admin']), actions);
-app.use('/metrics', authMiddleware, rbac(['admin']), metrics);
+app.use('/actions', authMiddleware, rbac(['sre']), actions);
+app.use('/metrics', authMiddleware, rbac(['manager']), metrics);
 app.use('/summary', authMiddleware, summary);
 app.use('/timeline', shareAuth, timeline);
 

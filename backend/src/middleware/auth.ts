@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+export type Role = 'admin' | 'sre' | 'manager' | 'executive';
+
 export interface UserPayload {
   id: number;
   username: string;
-  role: string;
+  role: Role;
 }
 
 export interface AuthRequest extends Request {
