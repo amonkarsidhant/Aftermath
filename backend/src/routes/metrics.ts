@@ -1,96 +1,66 @@
 import { Router } from 'express';
-import { incidents, actions, postmortems } from '../storage';
+import pool from '../db';
 
 const router = Router();
 
-const msToHours = (ms: number): number => ms / (1000 * 60 * 60);
+const MS_IN_HOUR = 1000 * 60 * 60;
 
-router.get('/', (_req, res) => {
-  const totalIncidents = incidents.length;
-  const incidentsWithPostmortems = incidents.filter((incident) =>
-    postmortems.some((pm) => pm.incidentId === incident.id)
-  );
-  const percentPostmortemsCompleted = totalIncidents
-    ? (incidentsWithPostmortems.length / totalIncidents) * 100
-    : 0;
-
-  const totalActions = actions.length;
-  const closedActions = actions.filter((action) => action.status === 'closed');
-  const percentActionsClosed = totalActions
-    ? (closedActions.length / totalActions) * 100
-    : 0;
-
-  const timesToPostmortem = incidentsWithPostmortems.map((incident) => {
-    const pm = postmortems.find((p) => p.incidentId === incident.id)!;
-    return pm.completedAt.getTime() - incident.createdAt.getTime();
-  });
-  const avgTimeToPostmortem = timesToPostmortem.length
-    ? timesToPostmortem.reduce((a, b) => a + b, 0) / timesToPostmortem.length
-    : 0;
-
-  const timesToCloseActions = closedActions.map(
-    (action) => action.closedAt!.getTime() - action.createdAt.getTime()
-  );
-  const avgTimeToCloseActions = timesToCloseActions.length
-    ? timesToCloseActions.reduce((a, b) => a + b, 0) / timesToCloseActions.length
-    : 0;
-
-  const teams = Array.from(new Set(incidents.map((i) => i.team)));
-  const teamMetrics: Record<string, {
-    percentPostmortemsCompleted: number;
-    percentActionsClosed: number;
-    avgTimeToPostmortemHours: number;
-    avgTimeToCloseActionsHours: number;
-  }> = {};
-
-  teams.forEach((team) => {
-    const teamIncidents = incidents.filter((i) => i.team === team);
-    const teamActions = actions.filter((a) =>
-      teamIncidents.some((incident) => incident.id === a.incidentId)
+router.get('/', async (_req, res, next) => {
+  try {
+    // Fetch incidents with detection time, resolution time and SLA hours
+    const incidentResult = await pool.query<{
+      id: number;
+      date_detected: Date;
+      date_resolved: Date | null;
+      sla_hours: number | null;
+    }>(
+      'SELECT id, date_detected, date_resolved, sla_hours FROM incidents'
     );
-    const teamIncidentsWithPostmortems = teamIncidents.filter((incident) =>
-      postmortems.some((pm) => pm.incidentId === incident.id)
+    const incidents = incidentResult.rows;
+
+    // Calculate MTTR for each resolved incident
+    const mttrPerIncident = incidents
+      .filter((i) => i.date_resolved)
+      .map((i) => ({
+        incidentId: i.id,
+        mttrHours:
+          (i.date_resolved!.getTime() - i.date_detected.getTime()) /
+          MS_IN_HOUR,
+      }));
+
+    const avgMttrHours = mttrPerIncident.length
+      ? mttrPerIncident.reduce((sum, i) => sum + i.mttrHours, 0) /
+        mttrPerIncident.length
+      : 0;
+
+    // SLA compliance calculation
+    const slaMet = incidents.filter(
+      (i) =>
+        i.date_resolved &&
+        i.sla_hours !== null &&
+        i.date_resolved.getTime() - i.date_detected.getTime() <=
+          (i.sla_hours || 0) * MS_IN_HOUR
+    ).length;
+    const slaCompliance = incidents.length
+      ? (slaMet / incidents.length) * 100
+      : 0;
+
+    // Count of open actions
+    const actionsResult = await pool.query<{ count: string }>(
+      "SELECT COUNT(*) FROM actions WHERE status <> 'closed'"
     );
-    const teamClosedActions = teamActions.filter((a) => a.status === 'closed');
-    const teamTimesToPostmortem = teamIncidentsWithPostmortems.map((incident) => {
-      const pm = postmortems.find((p) => p.incidentId === incident.id)!;
-      return pm.completedAt.getTime() - incident.createdAt.getTime();
+    const openActions = parseInt(actionsResult.rows[0].count, 10);
+
+    res.json({
+      mttrPerIncident,
+      avgMttrHours,
+      slaCompliance,
+      openActions,
     });
-    const teamTimesToCloseActions = teamClosedActions.map(
-      (a) => a.closedAt!.getTime() - a.createdAt.getTime()
-    );
-
-    teamMetrics[team] = {
-      percentPostmortemsCompleted: teamIncidents.length
-        ? (teamIncidentsWithPostmortems.length / teamIncidents.length) * 100
-        : 0,
-      percentActionsClosed: teamActions.length
-        ? (teamClosedActions.length / teamActions.length) * 100
-        : 0,
-      avgTimeToPostmortemHours: teamTimesToPostmortem.length
-        ? msToHours(
-            teamTimesToPostmortem.reduce((a, b) => a + b, 0) /
-              teamTimesToPostmortem.length
-          )
-        : 0,
-      avgTimeToCloseActionsHours: teamTimesToCloseActions.length
-        ? msToHours(
-            teamTimesToCloseActions.reduce((a, b) => a + b, 0) /
-              teamTimesToCloseActions.length
-          )
-        : 0
-    };
-  });
-
-  res.json({
-    metrics: {
-      percentPostmortemsCompleted,
-      percentActionsClosed,
-      avgTimeToPostmortemHours: msToHours(avgTimeToPostmortem),
-      avgTimeToCloseActionsHours: msToHours(avgTimeToCloseActions),
-      teamMetrics
-    }
-  });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;
+

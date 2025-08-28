@@ -231,11 +231,21 @@ components:
     Metrics:
       type: object
       properties:
-        mttrHours:
+        mttrPerIncident:
+          type: array
+          items:
+            type: object
+            properties:
+              incidentId:
+                type: integer
+              mttrHours:
+                type: number
+            required: [incidentId, mttrHours]
+        avgMttrHours:
           type: number
         slaCompliance:
           type: number
           description: Percentage of incidents resolved within SLA
         openActions:
           type: integer
-      required: [mttrHours, slaCompliance, openActions]
+      required: [mttrPerIncident, avgMttrHours, slaCompliance, openActions]
