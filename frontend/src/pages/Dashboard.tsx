@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import IncidentTable from '../components/IncidentTable';
 import SeverityBarChart from '../components/SeverityBarChart';
-import ActionsTab from '../components/ActionsTab';
+import ActionStatusPieChart from '../components/ActionStatusPieChart';
+import ActionList from '../components/ActionList';
 import MetricsTab from '../components/MetricsTab';
 import PostmortemViewer from '../components/PostmortemViewer';
 import PostmortemSearch from '../components/PostmortemSearch';
@@ -20,6 +21,9 @@ export default function Dashboard() {
   const [selectedPostmortem, setSelectedPostmortem] =
     useState<Postmortem | null>(null);
   const [severityFilter, setSeverityFilter] = useState<string | undefined>(
+    undefined
+  );
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(
     undefined
   );
 
@@ -60,7 +64,8 @@ export default function Dashboard() {
         )}
         {active === 'Actions' && (
           <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <ActionsTab />
+            <ActionStatusPieChart onSelectStatus={setStatusFilter} />
+            <ActionList statusFilter={statusFilter} />
           </div>
         )}
         {active === 'Metrics' && (
