@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import PostmortemDetail from '../PostmortemDetail';
-import { fetchTimelineEvents } from '../../api/timeline';
-import { generatePostmortemNarrative } from '../../ai/narrative';
+import { fetchTimelineEvents } from '../../services/timeline';
+import { generatePostmortemNarrative } from '../../services/ai/narrative';
 
-jest.mock('../../api/timeline');
-jest.mock('../../ai/narrative');
+jest.mock('../../services/timeline');
+jest.mock('../../services/ai/narrative');
 
 describe('PostmortemDetail', () => {
   it('renders error when timeline fetch fails', async () => {

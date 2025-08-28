@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { createAction, loadActions, Remediation } from '../api/remediations';
+import { createAction, loadActions, Remediation } from '../services/remediations';
 
 export default function RemediationActions() {
   const [description, setDescription] = useState('');

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import IncidentsTab from './IncidentsTab';
-import ActionsTab from './ActionsTab';
-import MetricsTab from './MetricsTab';
-import PostmortemDetail from './PostmortemDetail';
-import PostmortemSearch from './PostmortemSearch';
+import IncidentsTab from '../components/IncidentsTab';
+import ActionsTab from '../components/ActionsTab';
+import MetricsTab from '../components/MetricsTab';
+import PostmortemDetail from '../components/PostmortemDetail';
+import PostmortemSearch from '../components/PostmortemSearch';
 import type { Postmortem } from '../types';
-import TimelineTab from './TimelineTab';
-import CollaborationTab from './CollaborationTab';
-import ReviewAgenda from './ReviewAgenda';
-import RemediationActions from './RemediationActions';
+import TimelineTab from '../components/TimelineTab';
+import CollaborationTab from '../components/CollaborationTab';
+import ReviewAgenda from '../components/ReviewAgenda';
+import RemediationActions from '../components/RemediationActions';
 
 const tabs = [
   'Incidents',

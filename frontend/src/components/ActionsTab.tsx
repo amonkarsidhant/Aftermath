@@ -1,5 +1,5 @@
 import { PieChart, Pie, Tooltip, ResponsiveContainer } from 'recharts';
-import { actions } from '../mock/actions';
+import { actions } from '../utils/mock/actions';
 
 interface StatusCount {
   status: string;

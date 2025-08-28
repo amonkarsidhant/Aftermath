@@ -1,4 +1,4 @@
-import { TimelineEvent } from '../api/timeline';
+import { TimelineEvent } from '../timeline';
 
 export interface Narrative {
   detection: string;

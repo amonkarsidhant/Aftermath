@@ -1,5 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { mttrData } from '../mock/metrics';
+import { mttrData } from '../utils/mock/metrics';
 
 export default function MetricsTab() {
   return (

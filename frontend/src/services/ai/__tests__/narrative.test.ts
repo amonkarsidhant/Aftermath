@@ -4,7 +4,7 @@ import {
   generateBlamelessNarrative,
   Narrative,
 } from '../narrative';
-import { TimelineEvent } from '../../api/timeline';
+import { TimelineEvent } from '../../timeline';
 
 describe('narrative helpers', () => {
   beforeEach(() => {

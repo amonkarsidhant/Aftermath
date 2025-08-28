@@ -1,21 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Dashboard from '../Dashboard';
-import { fetchTimelineEvents } from '../../api/timeline';
-import { generatePostmortemNarrative } from '../../ai/narrative';
-import { searchPostmortems } from '../../api/postmortems';
+import { fetchTimelineEvents } from '../../services/timeline';
+import { generatePostmortemNarrative } from '../../services/ai/narrative';
+import { searchPostmortems } from '../../services/postmortems';
 
-jest.mock('../IncidentsTab', () => () => <div>IncidentsTab</div>);
-jest.mock('../ActionsTab', () => () => <div>ActionsTab</div>);
-jest.mock('../MetricsTab', () => () => <div>MetricsTab</div>);
-jest.mock('../TimelineTab', () => () => <div>TimelineTab</div>);
-jest.mock('../CollaborationTab', () => () => <div>CollaborationTab</div>);
-jest.mock('../ReviewAgenda', () => () => <div>ReviewAgenda</div>);
-jest.mock('../RemediationActions', () => () => <div>RemediationActions</div>);
+jest.mock('../../components/IncidentsTab', () => () => <div>IncidentsTab</div>);
+jest.mock('../../components/ActionsTab', () => () => <div>ActionsTab</div>);
+jest.mock('../../components/MetricsTab', () => () => <div>MetricsTab</div>);
+jest.mock('../../components/TimelineTab', () => () => <div>TimelineTab</div>);
+jest.mock('../../components/CollaborationTab', () => () => <div>CollaborationTab</div>);
+jest.mock('../../components/ReviewAgenda', () => () => <div>ReviewAgenda</div>);
+jest.mock('../../components/RemediationActions', () => () => <div>RemediationActions</div>);
 
-jest.mock('../../api/timeline');
-jest.mock('../../ai/narrative');
-jest.mock('../../api/postmortems');
+jest.mock('../../services/timeline');
+jest.mock('../../services/ai/narrative');
+jest.mock('../../services/postmortems');
 
 describe('Dashboard', () => {
   it('navigates to Postmortems and shows details when a row is selected', async () => {
