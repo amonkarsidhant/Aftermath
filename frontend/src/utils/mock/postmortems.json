@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "incidentId": "1",
+    "title": "Auth database outage",
+    "summary": "Auth service experienced a database outage",
+    "tags": ["database", "auth"],
+    "impact": "Users could not log in",
+    "rootCause": "Misconfigured firewall rule",
+    "resolution": "Updated firewall settings",
+    "lessons": "Improve deployment checks"
+  },
+  {
+    "id": 2,
+    "incidentId": "2",
+    "title": "Payment latency",
+    "summary": "External API slowness caused payment delays",
+    "tags": ["payments", "api"],
+    "resolution": "Switched to backup provider"
+  }
+]
