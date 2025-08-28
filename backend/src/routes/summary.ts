@@ -1,32 +1,46 @@
 import { Router } from 'express';
-import { incidents } from '../storage';
+import { Pool } from 'pg';
 
 const router = Router();
+const pool = new Pool();
 
-const msToHours = (ms: number): number => ms / (1000 * 60 * 60);
+const MS_IN_HOUR = 1000 * 60 * 60;
 
-router.get('/', (_req, res) => {
-  const now = Date.now();
-  const ninetyDaysAgo = now - 90 * 24 * 60 * 60 * 1000;
-  const recent = incidents.filter((i) => i.createdAt.getTime() >= ninetyDaysAgo);
+router.get('/', async (_req, res, next) => {
+  try {
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+    const { rows } = await pool.query<{
+      severity: number;
+      date_detected: Date;
+      date_resolved: Date | null;
+      sla_hours: number | null;
+    }>(
+      'SELECT severity, date_detected, date_resolved, sla_hours FROM incidents WHERE date_detected >= $1',
+      [ninetyDaysAgo]
+    );
 
-  const sev1Count = recent.filter((i) => i.severity === 1).length;
+    const sev1Count = rows.filter((r) => r.severity === 1).length;
 
-  const mttrs = recent
-    .filter((i) => i.resolvedAt)
-    .map((i) => i.resolvedAt!.getTime() - i.createdAt.getTime());
-  const avgMttrHours = mttrs.length
-    ? msToHours(mttrs.reduce((a, b) => a + b, 0) / mttrs.length)
-    : 0;
+    const mttrs = rows
+      .filter((r) => r.date_resolved)
+      .map((r) => r.date_resolved!.getTime() - r.date_detected.getTime());
+    const avgMttrHours = mttrs.length
+      ? mttrs.reduce((a, b) => a + b, 0) / mttrs.length / MS_IN_HOUR
+      : 0;
 
-  const slaMet = recent.filter(
-    (i) =>
-      i.resolvedAt &&
-      i.resolvedAt.getTime() - i.createdAt.getTime() <= i.slaHours * 60 * 60 * 1000
-  ).length;
-  const slaPercent = recent.length ? (slaMet / recent.length) * 100 : 0;
+    const slaMet = rows.filter(
+      (r) =>
+        r.date_resolved &&
+        r.sla_hours !== null &&
+        r.date_resolved.getTime() - r.date_detected.getTime() <=
+          (r.sla_hours || 0) * MS_IN_HOUR
+    ).length;
+    const slaPercent = rows.length ? (slaMet / rows.length) * 100 : 0;
 
-  res.json({ sev1Count, avgMttrHours, slaPercent });
+    res.json({ sev1Count, avgMttrHours, slaPercent });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import pool from '../db';
+import { Pool } from 'pg';
 
 const router = Router();
+const pool = new Pool();
 
 const MS_IN_HOUR = 1000 * 60 * 60;
 
