@@ -3,8 +3,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { fetchTimelineEvents, TimelineEvent } from '../api/timeline';
 import {
-  generatePostmortemNarrative,
-  rewriteBlameless,
+  generateBlamelessNarrative,
   Narrative,
 } from '../ai/narrative';
 import type { Postmortem } from '../types';
@@ -15,17 +14,32 @@ interface Props {
 
 export default function PostmortemDetail({ postmortem }: Props) {
   const [narrative, setNarrative] = useState<Narrative | null>(null);
-  const [suggestions, setSuggestions] = useState<
-    Partial<Record<keyof Narrative, string>>
-  >({});
+  const [original, setOriginal] = useState<Narrative | null>(null);
+  const [blameless, setBlameless] = useState<Narrative | null>(null);
+  const [showOriginal, setShowOriginal] = useState<
+    Record<keyof Narrative, boolean>
+  >({
+    detection: false,
+    escalation: false,
+    mitigation: false,
+    resolution: false,
+  });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
         const events: TimelineEvent[] = await fetchTimelineEvents();
-        const gen = await generatePostmortemNarrative(events);
-        setNarrative(gen);
+        const { original, blameless } = await generateBlamelessNarrative(events);
+        setOriginal(original);
+        setBlameless(blameless);
+        setNarrative(blameless);
+        setShowOriginal({
+          detection: false,
+          escalation: false,
+          mitigation: false,
+          resolution: false,
+        });
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
@@ -38,15 +52,15 @@ export default function PostmortemDetail({ postmortem }: Props) {
     setNarrative((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
-  const handleRewrite = async (field: keyof Narrative) => {
-    if (!narrative) return;
-    try {
-      const text = await rewriteBlameless(narrative[field]);
-      setSuggestions((prev) => ({ ...prev, [field]: text }));
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
+  const handleToggle = (field: keyof Narrative) => {
+    if (!original || !blameless) return;
+    setShowOriginal((prev) => {
+      const next = !prev[field];
+      setNarrative((curr) =>
+        curr ? { ...curr, [field]: next ? original[field] : blameless[field] } : curr,
+      );
+      return { ...prev, [field]: next };
+    });
   };
 
   const exportPdf = async () => {
@@ -95,17 +109,12 @@ export default function PostmortemDetail({ postmortem }: Props) {
                   onChange={(e) => handleChange(phase, e.target.value)}
                   className="w-full border p-2 rounded"
                 />
-                {suggestions[phase] && (
-                  <p className="text-sm text-neutral-500">
-                    Suggestion: {suggestions[phase]}
-                  </p>
-                )}
                 <button
                   type="button"
-                  onClick={() => handleRewrite(phase)}
+                  onClick={() => handleToggle(phase)}
                   className="text-sm text-primary underline"
                 >
-                  Rewrite blameless
+                  {showOriginal[phase] ? 'Use blameless' : 'Use original'}
                 </button>
               </div>
             ))}

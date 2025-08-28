@@ -1,4 +1,9 @@
-import { generatePostmortemNarrative, rewriteBlameless, Narrative } from '../narrative';
+import {
+  generatePostmortemNarrative,
+  rewriteBlameless,
+  generateBlamelessNarrative,
+  Narrative,
+} from '../narrative';
 import { TimelineEvent } from '../../api/timeline';
 
 describe('narrative helpers', () => {
@@ -56,5 +61,66 @@ describe('narrative helpers', () => {
     const result = await rewriteBlameless('Original text');
     expect(result).toBe('Rewritten text');
     expect(fetch).toHaveBeenCalled();
+  });
+
+  it('generates a blameless narrative automatically', async () => {
+    const events: TimelineEvent[] = [
+      {
+        source: 'monitor',
+        timestamp: '2024-01-01T00:00:00Z',
+        description: 'Alert triggered',
+      },
+    ];
+    (fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          choices: [
+            {
+              message: {
+                content: JSON.stringify({
+                  detection: 'Alert triggered',
+                  escalation: 'On-call notified',
+                  mitigation: 'Restarted service',
+                  resolution: 'Issue resolved',
+                }),
+              },
+            },
+          ],
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: 'BD' } }] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: 'BE' } }] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: 'BM' } }] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: 'BR' } }] }),
+      });
+
+    const result = await generateBlamelessNarrative(events);
+    expect(result).toEqual({
+      original: {
+        detection: 'Alert triggered',
+        escalation: 'On-call notified',
+        mitigation: 'Restarted service',
+        resolution: 'Issue resolved',
+      },
+      blameless: {
+        detection: 'BD',
+        escalation: 'BE',
+        mitigation: 'BM',
+        resolution: 'BR',
+      },
+    });
+    expect(fetch).toHaveBeenCalledTimes(5);
   });
 });
