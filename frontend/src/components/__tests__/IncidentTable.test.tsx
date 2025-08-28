@@ -4,12 +4,14 @@ import IncidentTable from '../IncidentTable';
 import { useIncidents } from '../../services/api';
 import mockIncidents from '../../utils/mock/incidents.json';
 import { exportElementToPDF, exportToCSV } from '../../utils/export';
+import { getIncidentShareUrl } from '../../services/share';
 
 jest.mock('../../services/api', () => ({ useIncidents: jest.fn() }));
 jest.mock('../../utils/export', () => ({
   exportElementToPDF: jest.fn(),
   exportToCSV: jest.fn(),
 }));
+jest.mock('../../services/share', () => ({ getIncidentShareUrl: jest.fn() }));
 
 describe('IncidentTable', () => {
   beforeEach(() => {
@@ -23,7 +25,7 @@ describe('IncidentTable', () => {
 
   it('renders all columns', () => {
     render(<IncidentTable />);
-    ['ID', 'Service', 'Severity', 'Status', 'Date'].forEach((col) => {
+    ['ID', 'Service', 'Severity', 'Status', 'Date', 'Share'].forEach((col) => {
       expect(screen.getByText(col)).toBeInTheDocument();
     });
   });
@@ -57,6 +59,18 @@ describe('IncidentTable', () => {
     expect(exportElementToPDF).toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: /export csv/i }));
     expect(exportToCSV).toHaveBeenCalled();
+  });
+
+  it('copies share link', async () => {
+    const user = userEvent.setup();
+    (getIncidentShareUrl as jest.Mock).mockResolvedValue('link');
+    Object.assign(navigator, { clipboard: { writeText: jest.fn() } });
+    render(<IncidentTable />);
+    await screen.findByText('Auth');
+    const btn = screen.getAllByRole('button', { name: /share/i })[0];
+    await user.click(btn);
+    expect(getIncidentShareUrl).toHaveBeenCalled();
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('link');
   });
 });
 
