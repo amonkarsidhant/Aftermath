@@ -10,3 +10,11 @@ export interface IncidentResponse {
   responderId: string;
   timestamp: string;
 }
+
+export interface Postmortem {
+  id: number;
+  incidentId: string;
+  title: string;
+  summary: string;
+  tags: string[];
+}

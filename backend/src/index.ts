@@ -8,6 +8,9 @@ import authMiddleware from './middleware/auth';
 import rbac from './middleware/rbac';
 import errorHandler from './middleware/errorHandler';
 import logger from './middleware/logger';
+import { buildSchema } from 'graphql';
+import { graphqlHTTP } from 'express-graphql';
+import { searchPostmortems } from './search';
 
 const app = express();
 const port = Number(process.env.PORT) || 5000;
@@ -26,6 +29,32 @@ app.use('/incidents', authMiddleware, incidents);
 app.use('/postmortems', authMiddleware, postmortems);
 app.use('/actions', authMiddleware, rbac(['admin']), actions);
 app.use('/metrics', authMiddleware, rbac(['admin']), metrics);
+
+const schema = buildSchema(`
+  type Postmortem {
+    id: ID!
+    incidentId: String!
+    title: String!
+    summary: String!
+    tags: [String!]!
+  }
+
+  type Query {
+    searchPostmortems(q: String!): [Postmortem!]!
+  }
+`);
+
+app.use(
+  '/graphql',
+  authMiddleware,
+  graphqlHTTP({
+    schema,
+    rootValue: {
+      searchPostmortems: ({ q }: { q: string }) => searchPostmortems(q),
+    },
+    graphiql: true,
+  })
+);
 
 app.use(errorHandler);
 

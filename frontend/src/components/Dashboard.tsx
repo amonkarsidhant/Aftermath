@@ -2,8 +2,9 @@ import { useState } from 'react';
 import IncidentsTab from './IncidentsTab';
 import ActionsTab from './ActionsTab';
 import MetricsTab from './MetricsTab';
-import PostmortemDetail, { Postmortem } from './PostmortemDetail';
-import PostmortemTable from './PostmortemTable';
+import PostmortemDetail from './PostmortemDetail';
+import PostmortemSearch from './PostmortemSearch';
+import type { Postmortem } from '../types';
 import TimelineTab from './TimelineTab';
 import CollaborationTab from './CollaborationTab';
 import ReviewAgenda from './ReviewAgenda';
@@ -46,7 +47,7 @@ export default function Dashboard() {
         {active === 'Incidents' && <IncidentsTab />}
         {active === 'Postmortems' && (
           <div className="space-y-4">
-            <PostmortemTable onSelect={(pm) => setSelectedPostmortem(pm)} />
+            <PostmortemSearch onSelect={(pm) => setSelectedPostmortem(pm)} />
             {selectedPostmortem && (
               <PostmortemDetail postmortem={selectedPostmortem} />
             )}
