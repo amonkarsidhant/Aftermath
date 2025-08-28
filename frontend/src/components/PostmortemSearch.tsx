@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { searchPostmortems } from '../services/postmortems';
+import { usePostmortems } from '../services/api';
 import type { Postmortem } from '../types';
 
 interface Props {
@@ -8,19 +8,16 @@ interface Props {
 
 export default function PostmortemSearch({ onSelect }: Props) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Postmortem[]>([]);
+  const { data: results = [], refetch } = usePostmortems(query, {
+    enabled: false,
+  });
 
   useEffect(() => {
-    searchPostmortems('').then(setResults).catch(() => setResults([]));
-  }, []);
+    refetch();
+  }, [refetch]);
 
   const handleSearch = async () => {
-    try {
-      const res = await searchPostmortems(query);
-      setResults(res);
-    } catch {
-      setResults([]);
-    }
+    await refetch();
   };
 
   return (

@@ -1,14 +1,14 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import IncidentTable from '../IncidentTable';
-import { fetchIncidents } from '../../services/incidents';
+import { useIncidents } from '../../services/api';
 import mockIncidents from '../../utils/mock/incidents.json';
 
-jest.mock('../../services/incidents');
+jest.mock('../../services/api', () => ({ useIncidents: jest.fn() }));
 
 describe('IncidentTable', () => {
   beforeEach(() => {
-    (fetchIncidents as jest.Mock).mockResolvedValue(mockIncidents);
+    (useIncidents as jest.Mock).mockReturnValue({ data: mockIncidents });
   });
 
   it('renders all columns', () => {

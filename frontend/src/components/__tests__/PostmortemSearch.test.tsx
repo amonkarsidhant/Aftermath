@@ -1,9 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import PostmortemSearch from '../PostmortemSearch';
-import { searchPostmortems } from '../../services/postmortems';
+import { usePostmortems } from '../../services/api';
 import type { Postmortem } from '../../types';
 
-jest.mock('../../services/postmortems');
+jest.mock('../../services/api', () => ({ usePostmortems: jest.fn() }));
 
 describe('PostmortemSearch', () => {
   it('renders results from search', async () => {
@@ -16,7 +16,10 @@ describe('PostmortemSearch', () => {
         tags: ['database'],
       },
     ];
-    (searchPostmortems as jest.Mock).mockResolvedValue(mockResults);
+    (usePostmortems as jest.Mock).mockReturnValue({
+      data: mockResults,
+      refetch: jest.fn().mockResolvedValue({ data: mockResults }),
+    });
     const onSelect = jest.fn();
     render(<PostmortemSearch onSelect={onSelect} />);
     expect(await screen.findByText('Database outage')).toBeInTheDocument();
@@ -32,7 +35,10 @@ describe('PostmortemSearch', () => {
         tags: ['database'],
       },
     ];
-    (searchPostmortems as jest.Mock).mockResolvedValue(mockResults);
+    (usePostmortems as jest.Mock).mockReturnValue({
+      data: mockResults,
+      refetch: jest.fn().mockResolvedValue({ data: mockResults }),
+    });
     const onSelect = jest.fn();
     render(<PostmortemSearch onSelect={onSelect} />);
     const item = await screen.findByText('Database outage');
