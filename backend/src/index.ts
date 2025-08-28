@@ -2,10 +2,6 @@ import express from 'express';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import incidents from './routes/incidents';
-import postmortems from './routes/postmortems';
-import actions from './routes/actions';
-import metrics from './routes/metrics';
 import summary from './routes/summary';
 import timeline from './routes/timeline';
 import authRoutes from './routes/auth';
@@ -21,6 +17,21 @@ import { searchPostmortems } from './search';
 
 const app = express();
 const port = Number(process.env.PORT) || 5000;
+
+const useMockData = process.env.USE_MOCK_DATA === 'true';
+
+const incidents = (useMockData
+  ? require('./mock/incidents')
+  : require('./routes/incidents')).default;
+const postmortems = (useMockData
+  ? require('./mock/postmortems')
+  : require('./routes/postmortems')).default;
+const actions = (useMockData
+  ? require('./mock/actions')
+  : require('./routes/actions')).default;
+const metrics = (useMockData
+  ? require('./mock/metrics')
+  : require('./routes/metrics')).default;
 
 if (!process.env.JWT_SECRET) {
   // eslint-disable-next-line no-console
