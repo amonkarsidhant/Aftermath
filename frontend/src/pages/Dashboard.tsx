@@ -2,7 +2,7 @@ import { useState } from 'react';
 import IncidentTable from '../components/IncidentTable';
 import ActionsTab from '../components/ActionsTab';
 import MetricsTab from '../components/MetricsTab';
-import PostmortemDetail from '../components/PostmortemDetail';
+import PostmortemViewer from '../components/PostmortemViewer';
 import PostmortemSearch from '../components/PostmortemSearch';
 import ThemeToggle from '../components/ThemeToggle';
 import type { Postmortem } from '../types';
@@ -49,7 +49,7 @@ export default function Dashboard() {
           <div className="max-w-screen-xl mx-auto space-y-4">
             <PostmortemSearch onSelect={(pm) => setSelectedPostmortem(pm)} />
             {selectedPostmortem && (
-              <PostmortemDetail postmortem={selectedPostmortem} />
+              <PostmortemViewer postmortem={selectedPostmortem} />
             )}
           </div>
         )}
