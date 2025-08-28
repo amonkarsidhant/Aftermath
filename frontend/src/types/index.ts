@@ -13,7 +13,10 @@ export interface IncidentResponse {
 
 export interface Incident {
   id: number;
+  service: string;
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
+  status: 'Open' | 'In Progress' | 'Resolved';
+  date: string;
 }
 
 export interface Action {

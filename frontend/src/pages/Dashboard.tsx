@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import IncidentsTab from '../components/IncidentsTab';
+import IncidentTable from '../components/IncidentTable';
 import ActionsTab from '../components/ActionsTab';
 import MetricsTab from '../components/MetricsTab';
 import PostmortemDetail from '../components/PostmortemDetail';
@@ -42,7 +42,7 @@ export default function Dashboard() {
       <main className="flex-1 overflow-y-auto p-4">
         {active === 'Incidents' && (
           <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <IncidentsTab />
+            <IncidentTable />
           </div>
         )}
         {active === 'Postmortems' && (
