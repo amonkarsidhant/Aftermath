@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import IncidentTable from '../components/IncidentTable';
+import SeverityBarChart from '../components/SeverityBarChart';
 import ActionsTab from '../components/ActionsTab';
 import MetricsTab from '../components/MetricsTab';
 import PostmortemViewer from '../components/PostmortemViewer';
@@ -18,6 +19,9 @@ export default function Dashboard() {
   const [active, setActive] = useState<Tab>('Incidents');
   const [selectedPostmortem, setSelectedPostmortem] =
     useState<Postmortem | null>(null);
+  const [severityFilter, setSeverityFilter] = useState<string | undefined>(
+    undefined
+  );
 
   return (
     <div className="flex h-screen">
@@ -42,7 +46,8 @@ export default function Dashboard() {
       <main className="flex-1 overflow-y-auto p-4">
         {active === 'Incidents' && (
           <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <IncidentTable />
+            <SeverityBarChart onSelectSeverity={setSeverityFilter} />
+            <IncidentTable severityFilter={severityFilter} />
           </div>
         )}
         {active === 'Postmortems' && (

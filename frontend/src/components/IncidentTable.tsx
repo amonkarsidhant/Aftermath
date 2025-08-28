@@ -3,7 +3,11 @@ import { useTable, useGlobalFilter, Column } from 'react-table';
 import type { Incident } from '../types';
 import { incidents } from '../utils/mock/incidents';
 
-export default function IncidentTable() {
+interface Props {
+  severityFilter?: string;
+}
+
+export default function IncidentTable({ severityFilter }: Props) {
   const [severity, setSeverity] = useState('');
   const [service, setService] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -18,15 +22,17 @@ export default function IncidentTable() {
     []
   );
 
+  const currentSeverity = severityFilter ?? severity;
+
   const data = useMemo(() => {
     return incidents.filter((i) => {
-      if (severity && i.severity !== severity) return false;
+      if (currentSeverity && i.severity !== currentSeverity) return false;
       if (service && i.service !== service) return false;
       if (startDate && new Date(i.date) < new Date(startDate)) return false;
       if (endDate && new Date(i.date) > new Date(endDate)) return false;
       return true;
     });
-  }, [severity, service, startDate, endDate]);
+  }, [currentSeverity, service, startDate, endDate]);
 
   const columns = useMemo<Column<Incident>[]>(
     () => [
@@ -62,8 +68,10 @@ export default function IncidentTable() {
           className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         />
         <select
-          value={severity}
-          onChange={(e) => setSeverity(e.target.value)}
+          value={currentSeverity}
+          onChange={(e) =>
+            severityFilter === undefined ? setSeverity(e.target.value) : undefined
+          }
           aria-label="Severity"
           className="border border-neutral-300 dark:border-neutral-600 rounded p-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
         >

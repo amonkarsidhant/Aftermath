@@ -14,7 +14,7 @@ export interface IncidentResponse {
 export interface Incident {
   id: number;
   service: string;
-  severity: 'Critical' | 'High' | 'Medium' | 'Low';
+  severity: 'SEV-1' | 'SEV-2' | 'SEV-3';
   status: 'Open' | 'In Progress' | 'Resolved';
   date: string;
 }
