@@ -3,11 +3,12 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import validate from '../middleware/validate';
+import { Role } from '../middleware/auth';
 
 const router = Router();
 
 // Example in-memory users. In a real app, replace with DB lookup.
-const users = [
+const users: { id: number; username: string; passwordHash: string; role: Role }[] = [
   {
     id: 1,
     username: 'admin',
@@ -16,9 +17,21 @@ const users = [
   },
   {
     id: 2,
-    username: 'user',
+    username: 'sre',
     passwordHash: bcrypt.hashSync('password', 10),
-    role: 'user'
+    role: 'sre'
+  },
+  {
+    id: 3,
+    username: 'manager',
+    passwordHash: bcrypt.hashSync('password', 10),
+    role: 'manager'
+  },
+  {
+    id: 4,
+    username: 'executive',
+    passwordHash: bcrypt.hashSync('password', 10),
+    role: 'executive'
   }
 ];
 
