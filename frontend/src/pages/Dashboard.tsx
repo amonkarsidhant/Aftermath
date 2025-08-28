@@ -7,6 +7,7 @@ import MetricsTab from '../components/MetricsTab';
 import PostmortemViewer from '../components/PostmortemViewer';
 import PostmortemSearch from '../components/PostmortemSearch';
 import ThemeToggle from '../components/ThemeToggle';
+import SummaryBanner from '../components/SummaryBanner';
 import type { Postmortem } from '../types';
 const tabs = [
   'Incidents',
@@ -48,6 +49,7 @@ export default function Dashboard() {
         ))}
       </aside>
       <main className="flex-1 overflow-y-auto p-4">
+        <SummaryBanner />
         {active === 'Incidents' && (
           <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             <SeverityBarChart onSelectSeverity={setSeverityFilter} />

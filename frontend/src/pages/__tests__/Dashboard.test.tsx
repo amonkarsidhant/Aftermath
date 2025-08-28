@@ -10,6 +10,7 @@ jest.mock('../../components/IncidentTable', () => () => <div>IncidentTable</div>
 jest.mock('../../components/SeverityBarChart', () => () => <div>SeverityBarChart</div>);
 jest.mock('../../components/ActionsTab', () => () => <div>ActionsTab</div>);
 jest.mock('../../components/MetricsTab', () => () => <div>MetricsTab</div>);
+jest.mock('../../components/SummaryBanner', () => () => <div>SummaryBanner</div>);
 
 jest.mock('../../services/timeline');
 jest.mock('../../services/ai/narrative');
@@ -37,6 +38,8 @@ describe('Dashboard', () => {
 
     const user = userEvent.setup();
     render(<Dashboard />);
+
+    expect(screen.getByText('SummaryBanner')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Postmortems' }));
     const row = await screen.findByText('Database outage');
