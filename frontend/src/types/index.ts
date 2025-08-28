@@ -30,4 +30,8 @@ export interface Postmortem {
   title: string;
   summary: string;
   tags: string[];
+  impact?: string;
+  rootCause?: string;
+  resolution?: string;
+  lessons?: string;
 }
