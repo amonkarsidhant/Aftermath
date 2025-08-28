@@ -7,12 +7,7 @@ import {
   rewriteBlameless,
   Narrative,
 } from '../ai/narrative';
-
-export type Postmortem = {
-  title: string;
-  incidentId: string;
-  summary: string;
-};
+import type { Postmortem } from '../types';
 
 interface Props {
   postmortem: Postmortem;

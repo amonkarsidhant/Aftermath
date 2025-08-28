@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import Dashboard from '../Dashboard';
 import { fetchTimelineEvents } from '../../api/timeline';
 import { generatePostmortemNarrative } from '../../ai/narrative';
+import { searchPostmortems } from '../../api/postmortems';
 
 jest.mock('../IncidentsTab', () => () => <div>IncidentsTab</div>);
 jest.mock('../ActionsTab', () => () => <div>ActionsTab</div>);
@@ -14,6 +15,7 @@ jest.mock('../RemediationActions', () => () => <div>RemediationActions</div>);
 
 jest.mock('../../api/timeline');
 jest.mock('../../ai/narrative');
+jest.mock('../../api/postmortems');
 
 describe('Dashboard', () => {
   it('navigates to Postmortems and shows details when a row is selected', async () => {
@@ -24,6 +26,9 @@ describe('Dashboard', () => {
       mitigation: '',
       resolution: '',
     });
+    (searchPostmortems as jest.Mock).mockResolvedValue([
+      { id: 1, title: 'Database outage', incidentId: 'INC-001', summary: '', tags: ['database'] },
+    ]);
 
     const user = userEvent.setup();
     render(<Dashboard />);

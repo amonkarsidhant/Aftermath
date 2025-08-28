@@ -13,7 +13,7 @@ describe('PostmortemDetail', () => {
 
     render(
       <PostmortemDetail
-        postmortem={{ title: 't', incidentId: '1', summary: 's' }}
+        postmortem={{ id: 1, title: 't', incidentId: '1', summary: 's', tags: [] }}
       />
     );
 
@@ -31,7 +31,7 @@ describe('PostmortemDetail', () => {
 
     render(
       <PostmortemDetail
-        postmortem={{ title: 't', incidentId: '1', summary: 's' }}
+        postmortem={{ id: 1, title: 't', incidentId: '1', summary: 's', tags: [] }}
       />
     );
 

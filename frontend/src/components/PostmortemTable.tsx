@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTable, useSortBy, Column } from 'react-table';
-import type { Postmortem } from './PostmortemDetail';
+import type { Postmortem } from '../types';
 
 type TablePostmortem = Postmortem & {
   severity: string;
@@ -10,33 +10,41 @@ type TablePostmortem = Postmortem & {
 
 const mockData: TablePostmortem[] = [
   {
+    id: 1,
     title: 'Database outage',
     incidentId: 'INC-001',
     summary: 'Root cause and remediation details for the outage.',
+    tags: ['database'],
     severity: 'High',
     status: 'Open',
     createdAt: '2024-05-01',
   },
   {
+    id: 2,
     title: 'API latency spike',
     incidentId: 'INC-002',
     summary: 'Investigation into elevated API response times.',
+    tags: ['api'],
     severity: 'Medium',
     status: 'Resolved',
     createdAt: '2024-05-10',
   },
   {
+    id: 3,
     title: 'Authentication bug',
     incidentId: 'INC-003',
     summary: 'Issue with user authentication flow causing failures.',
+    tags: ['auth'],
     severity: 'Low',
     status: 'Open',
     createdAt: '2024-05-20',
   },
   {
+    id: 4,
     title: 'Network interruption',
     incidentId: 'INC-004',
      summary: 'Brief network outage impacting services.',
+    tags: ['network'],
     severity: 'High',
     status: 'Resolved',
     createdAt: '2024-06-01',

@@ -11,6 +11,7 @@ export interface Postmortem {
   incidentId: number;
   summary: string;
   completedAt: Date;
+  tags: string[];
 }
 
 export interface Action {
@@ -44,7 +45,15 @@ export const postmortems: Postmortem[] = [
     id: 1,
     incidentId: 1,
     summary: 'Resolved database outage',
-    completedAt: new Date('2024-05-02T10:00:00Z')
+    completedAt: new Date('2024-05-02T10:00:00Z'),
+    tags: ['database', 'outage']
+  },
+  {
+    id: 2,
+    incidentId: 2,
+    summary: 'Incident involving Kafka scaling',
+    completedAt: new Date('2024-05-04T15:00:00Z'),
+    tags: ['kafka', 'scaling']
   }
 ];
 
