@@ -1,4 +1,4 @@
-import { db } from './db';
+import pool from './db';
 
 export interface Postmortem {
   id: number;
@@ -17,24 +17,18 @@ export function parseQuery(query: string): string[] {
     .filter((w) => w && !STOPWORDS.has(w));
 }
 
-export function searchPostmortems(query: string): Promise<Postmortem[]> {
+export async function searchPostmortems(query: string): Promise<Postmortem[]> {
   const keywords = parseQuery(query);
   const like = `%${keywords.join('%')}%`;
-  return new Promise((resolve, reject) => {
-    db.all(
-      `SELECT id, incidentId, title, summary, tags FROM postmortems WHERE title LIKE ? OR summary LIKE ? OR tags LIKE ?`,
-      [like, like, like],
-      (err: Error | null, rows: any[]) => {
-        if (err) return reject(err);
-        const data = rows.map((r: any) => ({
-          id: r.id,
-          incidentId: r.incidentId,
-          title: r.title,
-          summary: r.summary,
-          tags: r.tags ? r.tags.split(',') : [],
-        }));
-        resolve(data);
-      }
-    );
-  });
+  const result = await pool.query(
+    `SELECT id, incidentId, title, summary, tags FROM postmortems WHERE title ILIKE $1 OR summary ILIKE $1 OR tags ILIKE $1`,
+    [like]
+  );
+  return result.rows.map((r) => ({
+    id: r.id,
+    incidentId: r.incidentid,
+    title: r.title,
+    summary: r.summary,
+    tags: r.tags ? r.tags.split(',') : [],
+  }));
 }
