@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { usePostmortems } from '../services/api';
 import type { Postmortem } from '../types';
+import LoadingSpinner from './LoadingSpinner';
+import ErrorMessage from './ErrorMessage';
 
 interface Props {
   onSelect: (pm: Postmortem) => void;
@@ -8,7 +10,12 @@ interface Props {
 
 export default function PostmortemSearch({ onSelect }: Props) {
   const [query, setQuery] = useState('');
-  const { data: results = [], refetch } = usePostmortems(query, {
+  const {
+    data: results = [],
+    refetch,
+    isLoading,
+    isError,
+  } = usePostmortems(query, {
     enabled: false,
   });
 
@@ -37,18 +44,28 @@ export default function PostmortemSearch({ onSelect }: Props) {
           Search
         </button>
       </div>
-      <ul className="divide-y divide-neutral-200 dark:divide-neutral-700">
-        {results.map((pm) => (
-          <li
-            key={pm.id}
-            className="p-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700"
-            onClick={() => onSelect(pm)}
-          >
-            <div className="font-medium">{pm.title}</div>
-            <div className="text-sm text-neutral-500">{pm.tags.join(', ')}</div>
-          </li>
-        ))}
-      </ul>
+      {isLoading && <LoadingSpinner />}
+      {isError && (
+        <ErrorMessage
+          message="Failed to load postmortems"
+          onRetry={refetch}
+        />
+      )}
+      {!isLoading && !isError && (
+        <ul className="divide-y divide-neutral-200 dark:divide-neutral-700">
+          {results.map((pm) => (
+            <li
+              key={pm.id}
+              className="p-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700"
+              onClick={() => onSelect(pm)}
+            >
+              <div className="font-medium">{pm.title}</div>
+              <div className="text-sm text-neutral-500">{pm.tags.join(', ')}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

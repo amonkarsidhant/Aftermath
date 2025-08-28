@@ -18,6 +18,8 @@ describe('PostmortemSearch', () => {
     ];
     (usePostmortems as jest.Mock).mockReturnValue({
       data: mockResults,
+      isLoading: false,
+      isError: false,
       refetch: jest.fn().mockResolvedValue({ data: mockResults }),
     });
     const onSelect = jest.fn();
@@ -37,6 +39,8 @@ describe('PostmortemSearch', () => {
     ];
     (usePostmortems as jest.Mock).mockReturnValue({
       data: mockResults,
+      isLoading: false,
+      isError: false,
       refetch: jest.fn().mockResolvedValue({ data: mockResults }),
     });
     const onSelect = jest.fn();
