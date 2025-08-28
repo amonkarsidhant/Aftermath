@@ -7,6 +7,11 @@ export interface Narrative {
   resolution: string;
 }
 
+export interface BlamelessNarrative {
+  original: Narrative;
+  blameless: Narrative;
+}
+
 function authHeader() {
   const key = (import.meta as any).env?.VITE_OPENAI_API_KEY;
   return key ? { Authorization: `Bearer ${key}` } : {};
@@ -63,4 +68,18 @@ export async function rewriteBlameless(text: string): Promise<string> {
   }
   const data = await res.json();
   return data.choices[0].message.content.trim();
+}
+
+export async function generateBlamelessNarrative(
+  events: TimelineEvent[],
+): Promise<BlamelessNarrative> {
+  const original = await generatePostmortemNarrative(events);
+  const entries = await Promise.all(
+    (Object.keys(original) as (keyof Narrative)[]).map(async (k) => [
+      k,
+      await rewriteBlameless(original[k]),
+    ]),
+  );
+  const blameless = Object.fromEntries(entries) as Narrative;
+  return { original, blameless };
 }
