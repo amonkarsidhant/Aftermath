@@ -35,6 +35,18 @@ describe('ServiceNowIntegration', () => {
     expect(scope.isDone()).toBe(true);
   });
 
+  it('pushPostmortem posts summary and returns response', async () => {
+    const summary = { summary: 'Postmortem details' };
+    const scope = nock('https://example.service-now.com')
+      .post('/incidents/123/postmortem', summary)
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, { success: true, message: 'Postmortem recorded' });
+
+    const result = await integration.pushPostmortem('123', summary);
+    expect(result).toEqual({ success: true, message: 'Postmortem recorded' });
+    expect(scope.isDone()).toBe(true);
+  });
+
   it('fetchEvents retrieves events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
@@ -49,6 +61,7 @@ describe('ServiceNowIntegration', () => {
           team: 'ITSM',
           role: 'Analyst',
         },
+        category: 'system',
       },
     ];
     const scope = nock('https://example.service-now.com')

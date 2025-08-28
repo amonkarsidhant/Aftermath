@@ -49,6 +49,7 @@ describe('SlackIntegration', () => {
           team: 'Support',
           role: 'Agent',
         },
+        category: 'human',
       },
     ];
     const scope = nock('https://slack.com')

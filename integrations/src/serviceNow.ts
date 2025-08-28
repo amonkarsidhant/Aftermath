@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
+import {
+  Integration,
+  Incident,
+  Action,
+  ActionResponse,
+  TimelineEvent,
+  PostmortemSummary,
+} from './types';
 
 export class ServiceNowIntegration implements Integration {
   private endpoint: string;
@@ -21,6 +28,17 @@ export class ServiceNowIntegration implements Integration {
     const { data } = await axios.post(`${this.endpoint}/actions`, item, {
       headers: { Authorization: `Bearer ${this.token}` },
     });
+    return data;
+  }
+
+  async pushPostmortem(id: string, summary: PostmortemSummary): Promise<ActionResponse> {
+    const { data } = await axios.post(
+      `${this.endpoint}/incidents/${id}/postmortem`,
+      summary,
+      {
+        headers: { Authorization: `Bearer ${this.token}` },
+      }
+    );
     return data;
   }
 
