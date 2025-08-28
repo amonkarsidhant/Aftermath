@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
 
 export class ServiceNowIntegration implements Integration {
@@ -10,35 +11,28 @@ export class ServiceNowIntegration implements Integration {
   }
 
   async fetchIncident(id: string): Promise<Incident> {
-    // Mock API call
-    console.log(`ServiceNow fetchIncident called with id=${id} using ${this.endpoint}`);
-    return { id, source: 'ServiceNow' };
+    const { data } = await axios.get(`${this.endpoint}/incidents/${id}`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return data;
   }
 
   async createAction(item: Action): Promise<ActionResponse> {
-    // Mock API call
-    console.log('ServiceNow createAction called with', item);
-    return { success: true, message: 'ServiceNow action created' };
+    const { data } = await axios.post(`${this.endpoint}/actions`, item, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return data;
   }
 
   async fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]> {
-    // Mock API call
-    console.log(
-      `ServiceNow fetchEvents called with start=${start.toISOString()} end=${end.toISOString()} using ${this.endpoint}`
-    );
-    return [
-      {
-        source: 'ServiceNow',
-        timestamp: start.toISOString(),
-        description: 'ServiceNow event',
-        responder: {
-          id: 'servicenow-responder-1',
-          name: 'ServiceNow Responder',
-          team: 'ITSM',
-          role: 'Analyst',
-        },
+    const { data } = await axios.get(`${this.endpoint}/events`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+      params: {
+        start: start.toISOString(),
+        end: end.toISOString(),
       },
-    ];
+    });
+    return data;
   }
 }
 
