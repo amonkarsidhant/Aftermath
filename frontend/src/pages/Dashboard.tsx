@@ -8,12 +8,14 @@ import PostmortemViewer from '../components/PostmortemViewer';
 import PostmortemSearch from '../components/PostmortemSearch';
 import ThemeToggle from '../components/ThemeToggle';
 import SummaryBanner from '../components/SummaryBanner';
+import TimelineTab from '../components/TimelineTab';
 import type { Postmortem } from '../types';
 const tabs = [
   'Incidents',
   'Postmortems',
   'Actions',
   'Metrics',
+  'Timeline',
 ] as const;
 type Tab = typeof tabs[number];
 
@@ -73,6 +75,11 @@ export default function Dashboard() {
         {active === 'Metrics' && (
           <div className="max-w-screen-xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             <MetricsTab />
+          </div>
+        )}
+        {active === 'Timeline' && (
+          <div className="max-w-screen-xl mx-auto">
+            <TimelineTab />
           </div>
         )}
       </main>

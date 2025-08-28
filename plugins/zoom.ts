@@ -35,6 +35,7 @@ class ZoomIntegration implements Integration {
         source: 'Zoom',
         timestamp: start.toISOString(),
         description: 'Zoom event',
+        category: 'human',
       },
     ];
   }

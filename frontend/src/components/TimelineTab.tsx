@@ -6,6 +6,9 @@ export default function TimelineTab() {
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<
+    ('human' | 'system')[]
+  >(['human', 'system']);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,12 +34,19 @@ export default function TimelineTab() {
     );
   };
 
+  const toggleCategory = (c: 'human' | 'system') => {
+    setSelectedCategories((prev) =>
+      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
+    );
+  };
+
   const filtered = events.filter((ev) => {
     const time = new Date(ev.timestamp).getTime();
     const s = start ? new Date(start).getTime() : -Infinity;
     const e = end ? new Date(end).getTime() : Infinity;
     return (
       selectedProviders.includes(ev.source) &&
+      selectedCategories.includes(ev.category) &&
       time >= s &&
       time <= e
     );
@@ -53,6 +63,7 @@ export default function TimelineTab() {
   };
 
   const providers = Array.from(new Set(events.map((e) => e.source)));
+  const categories: ('human' | 'system')[] = ['human', 'system'];
 
   return (
     <div className="space-y-4">
@@ -89,6 +100,18 @@ export default function TimelineTab() {
                 onChange={() => toggleProvider(p)}
               />
               {p}
+            </label>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          {categories.map((c) => (
+            <label key={c} className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={selectedCategories.includes(c)}
+                onChange={() => toggleCategory(c)}
+              />
+              {c.charAt(0).toUpperCase() + c.slice(1)}
             </label>
           ))}
         </div>

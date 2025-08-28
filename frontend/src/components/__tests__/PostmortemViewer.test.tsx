@@ -25,7 +25,7 @@ jest.mock('html2canvas');
 describe('PostmortemViewer', () => {
   beforeEach(() => {
     (fetchTimelineEvents as jest.Mock).mockResolvedValue([
-      { source: 's', timestamp: 't', description: 'event' },
+      { source: 's', timestamp: 't', description: 'event', category: 'human' },
     ]);
     (loadActions as jest.Mock).mockReturnValue([
       { id: '1', provider: 'jira', description: 'action', url: 'u' },

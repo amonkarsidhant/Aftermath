@@ -35,6 +35,7 @@ class GrafanaIntegration implements Integration {
         source: 'Grafana',
         timestamp: start.toISOString(),
         description: 'Grafana event',
+        category: 'system',
       },
     ];
   }

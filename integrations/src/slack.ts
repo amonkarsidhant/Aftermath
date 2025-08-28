@@ -32,6 +32,6 @@ export class SlackIntegration implements Integration {
         end: end.toISOString(),
       },
     });
-    return data;
+    return (data as TimelineEvent[]).map((e) => ({ ...e, category: 'human' }));
   }
 }

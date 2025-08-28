@@ -35,6 +35,7 @@ class DatadogIntegration implements Integration {
         source: 'Datadog',
         timestamp: start.toISOString(),
         description: 'Datadog event',
+        category: 'system',
       },
     ];
   }

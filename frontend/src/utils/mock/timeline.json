@@ -2,16 +2,19 @@
   {
     "source": "monitoring",
     "timestamp": "2024-01-01T00:00:00Z",
-    "description": "Alert triggered"
+    "description": "Alert triggered",
+    "category": "system"
   },
   {
     "source": "incident",
     "timestamp": "2024-01-01T00:05:00Z",
-    "description": "Investigation started"
+    "description": "Investigation started",
+    "category": "human"
   },
   {
     "source": "resolution",
     "timestamp": "2024-01-01T00:30:00Z",
-    "description": "Issue resolved"
+    "description": "Issue resolved",
+    "category": "system"
   }
 ]
