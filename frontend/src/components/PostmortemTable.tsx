@@ -120,7 +120,7 @@ export default function PostmortemTable({ onSelect }: Props) {
       <div className="overflow-x-auto">
         <table
           {...getTableProps()}
-          className="min-w-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded"
+          className="min-w-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded text-xs sm:text-sm"
         >
         <thead>
           {headerGroups.map((headerGroup: any) => (
