@@ -7,6 +7,7 @@ import { searchPostmortems } from '../../services/postmortems';
 import type { Postmortem } from '../../types';
 
 jest.mock('../../components/IncidentTable', () => () => <div>IncidentTable</div>);
+jest.mock('../../components/SeverityBarChart', () => () => <div>SeverityBarChart</div>);
 jest.mock('../../components/ActionsTab', () => () => <div>ActionsTab</div>);
 jest.mock('../../components/MetricsTab', () => () => <div>MetricsTab</div>);
 

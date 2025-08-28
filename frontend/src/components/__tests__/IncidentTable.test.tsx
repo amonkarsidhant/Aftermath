@@ -13,10 +13,10 @@ describe('IncidentTable', () => {
   it('filters by severity', async () => {
     const user = userEvent.setup();
     render(<IncidentTable />);
-    await user.selectOptions(screen.getByLabelText('Severity'), 'High');
+    await user.selectOptions(screen.getByLabelText('Severity'), 'SEV-2');
     const table = screen.getByRole('table');
     expect(within(table).getAllByRole('row')).toHaveLength(3);
-    expect(within(table).queryByText('Critical')).toBeNull();
+    expect(within(table).queryByText('SEV-1')).toBeNull();
   });
 
   it('searches by id', async () => {
