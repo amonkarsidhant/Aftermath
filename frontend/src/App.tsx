@@ -1,7 +1,16 @@
-import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import SREDashboard from './pages/SREDashboard';
+import ExecutiveDashboard from './pages/ExecutiveDashboard';
+import { useUser } from './hooks/useUser';
 
 function App() {
-  return <Dashboard />;
+  const { token, role } = useUser();
+
+  if (!token) {
+    return <Login />;
+  }
+
+  return role === 'admin' ? <SREDashboard /> : <ExecutiveDashboard />;
 }
 
 export default App;
