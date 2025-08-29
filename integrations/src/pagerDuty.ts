@@ -25,13 +25,17 @@ export class PagerDutyIntegration implements Integration {
   }
 
   async fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]> {
-    const { data } = await axios.get(`${this.endpoint}/events`, {
-      headers: { Authorization: `Bearer ${this.token}` },
-      params: {
-        start: start.toISOString(),
-        end: end.toISOString(),
-      },
-    });
+    const incidentId = process.env.PAGERDUTY_INCIDENT_ID ?? 'dummy-incident';
+    const { data } = await axios.get(
+      `${this.endpoint}/incidents/${incidentId}/timeline`,
+      {
+        headers: { Authorization: `Bearer ${this.token}` },
+        params: {
+          start: start.toISOString(),
+          end: end.toISOString(),
+        },
+      }
+    );
     return (data as TimelineEvent[]).map((e) => ({ ...e, category: 'system' }));
   }
 }

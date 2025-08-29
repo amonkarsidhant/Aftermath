@@ -20,11 +20,20 @@ export interface PostmortemSummary {
   [key: string]: any;
 }
 
+export interface Responder {
+  id: string;
+  name: string;
+  team: string;
+  role: string;
+}
+
 export interface TimelineEvent {
   source: string;
   timestamp: string;
   description: string;
   category: 'human' | 'system';
+  responder?: Responder;
+  escalationChain?: Responder[];
   [key: string]: any;
 }
 
