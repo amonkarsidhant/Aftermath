@@ -80,5 +80,44 @@ describe('JiraIntegration', () => {
     delete process.env.JIRA_ENDPOINT;
     delete process.env.JIRA_TOKEN;
   });
+
+  it('pollActionStatus emits updates and persists them', async () => {
+    const first = {
+      fields: {
+        status: { name: 'Open' },
+        assignee: { displayName: 'Alice' },
+      },
+    };
+    const second = {
+      fields: {
+        status: { name: 'In Progress' },
+        assignee: { displayName: 'Bob' },
+      },
+    };
+
+    const scope = nock('https://your-jira-instance.atlassian.net')
+      .get('/issues/100')
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, first)
+      .get('/issues/100')
+      .matchHeader('Authorization', 'Bearer dummy-token')
+      .reply(200, second);
+
+    const repo = { save: jest.fn().mockResolvedValue(undefined) };
+    const polling = new JiraIntegration(repo as any, 10);
+    const updates: any[] = [];
+
+    for await (const update of polling.pollActionStatus('100')) {
+      updates.push(update);
+      if (updates.length === 2) break;
+    }
+
+    expect(updates).toEqual([
+      { status: 'Open', assignee: 'Alice' },
+      { status: 'In Progress', assignee: 'Bob' },
+    ]);
+    expect(repo.save).toHaveBeenCalledTimes(2);
+    expect(scope.isDone()).toBe(true);
+  });
 });
 

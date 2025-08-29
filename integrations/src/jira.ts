@@ -1,13 +1,28 @@
 import axios from 'axios';
-import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
+import {
+  Integration,
+  Incident,
+  Action,
+  ActionResponse,
+  TimelineEvent,
+  ActionStatusUpdate,
+} from './types';
+import { ActionStatusRepository, defaultStatusRepository } from './statusRepository';
 
 export class JiraIntegration implements Integration {
   private endpoint: string;
   private token: string;
+  private pollInterval: number;
+  private statusRepo: ActionStatusRepository;
 
-  constructor() {
+  constructor(
+    statusRepo: ActionStatusRepository = defaultStatusRepository,
+    pollInterval = 5000,
+  ) {
     this.endpoint = process.env.JIRA_ENDPOINT ?? 'https://your-jira-instance.atlassian.net';
     this.token = process.env.JIRA_TOKEN ?? 'dummy-token';
+    this.statusRepo = statusRepo;
+    this.pollInterval = pollInterval;
   }
 
   async fetchIncident(id: string): Promise<Incident> {
@@ -33,6 +48,28 @@ export class JiraIntegration implements Integration {
       },
     });
     return data;
+  }
+
+  async *pollActionStatus(id: string): AsyncGenerator<ActionStatusUpdate> {
+    let lastStatus: string | null = null;
+    let lastAssignee: string | null = null;
+
+    while (true) {
+      const { data } = await axios.get(`${this.endpoint}/issues/${id}`, {
+        headers: { Authorization: `Bearer ${this.token}` },
+      });
+      const status = data?.fields?.status?.name ?? data.status;
+      const assignee = data?.fields?.assignee?.displayName ?? data.assignee ?? null;
+
+      if (status !== lastStatus || assignee !== lastAssignee) {
+        lastStatus = status;
+        lastAssignee = assignee;
+        await this.statusRepo.save({ id, status, assignee });
+        yield { status, assignee };
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, this.pollInterval));
+    }
   }
 }
 

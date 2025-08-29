@@ -37,10 +37,16 @@ export interface TimelineEvent {
   [key: string]: any;
 }
 
+export interface ActionStatusUpdate {
+  status: string;
+  assignee?: string | null;
+}
+
 export interface Integration {
   fetchIncident(id: string): Promise<Incident>;
   createAction(item: Action): Promise<ActionResponse>;
   fetchEvents(start: Date, end: Date): Promise<TimelineEvent[]>;
   pushPostmortem?(id: string, summary: PostmortemSummary): Promise<ActionResponse>;
+  pollActionStatus?(id: string): AsyncGenerator<ActionStatusUpdate>;
 }
 
