@@ -38,6 +38,7 @@ describe('PagerDutyIntegration', () => {
   it('fetchEvents retrieves events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
+    process.env.PAGERDUTY_INCIDENT_ID = 'incident-123';
     const events = [
       {
         source: 'PagerDuty',
@@ -49,11 +50,19 @@ describe('PagerDutyIntegration', () => {
           team: 'OnCall',
           role: 'Responder',
         },
+        escalationChain: [
+          {
+            id: 'pagerduty-escalation-1',
+            name: 'PagerDuty Escalation',
+            team: 'OnCall',
+            role: 'Level1',
+          },
+        ],
         category: 'system',
       },
     ];
     const scope = nock('https://api.pagerduty.com')
-      .get('/events')
+      .get('/incidents/incident-123/timeline')
       .query({ start: start.toISOString(), end: end.toISOString() })
       .matchHeader('Authorization', 'Bearer dummy-token')
       .reply(200, events);
@@ -61,6 +70,7 @@ describe('PagerDutyIntegration', () => {
     const result = await integration.fetchEvents(start, end);
     expect(result).toEqual(events);
     expect(scope.isDone()).toBe(true);
+    delete process.env.PAGERDUTY_INCIDENT_ID;
   });
 
   it('fetchEvents uses configured endpoint when provided', async () => {
@@ -68,10 +78,11 @@ describe('PagerDutyIntegration', () => {
     const end = new Date('2023-01-02T00:00:00Z');
     process.env.PAGERDUTY_ENDPOINT = 'https://custom.pagerduty';
     process.env.PAGERDUTY_TOKEN = 'custom-token';
+    process.env.PAGERDUTY_INCIDENT_ID = 'custom-incident';
     const custom = new PagerDutyIntegration();
 
     const scope = nock('https://custom.pagerduty')
-      .get('/events')
+      .get('/incidents/custom-incident/timeline')
       .query({ start: start.toISOString(), end: end.toISOString() })
       .matchHeader('Authorization', 'Bearer custom-token')
       .reply(200, []);
@@ -80,6 +91,7 @@ describe('PagerDutyIntegration', () => {
     expect(scope.isDone()).toBe(true);
     delete process.env.PAGERDUTY_ENDPOINT;
     delete process.env.PAGERDUTY_TOKEN;
+    delete process.env.PAGERDUTY_INCIDENT_ID;
   });
 });
 
