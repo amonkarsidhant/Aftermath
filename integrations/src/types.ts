@@ -50,3 +50,17 @@ export interface Integration {
   pollActionStatus?(id: string): AsyncGenerator<ActionStatusUpdate>;
 }
 
+export async function defaultPushPostmortem(
+  id: string,
+  summary: PostmortemSummary,
+): Promise<ActionResponse> {
+  return { success: false, message: 'Not supported' };
+}
+
+export async function* defaultPollActionStatus(
+  id: string,
+): AsyncGenerator<ActionStatusUpdate> {
+  // No updates by default
+  return;
+}
+

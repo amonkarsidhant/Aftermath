@@ -1,5 +1,15 @@
 import axios from 'axios';
-import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
+import {
+  Integration,
+  Incident,
+  Action,
+  ActionResponse,
+  TimelineEvent,
+  PostmortemSummary,
+  ActionStatusUpdate,
+  defaultPushPostmortem,
+  defaultPollActionStatus,
+} from './types';
 
 export class PagerDutyIntegration implements Integration {
   private endpoint: string;
@@ -9,6 +19,10 @@ export class PagerDutyIntegration implements Integration {
     this.endpoint = process.env.PAGERDUTY_ENDPOINT ?? 'https://api.pagerduty.com';
     this.token = process.env.PAGERDUTY_TOKEN ?? 'dummy-token';
   }
+
+  pushPostmortem = defaultPushPostmortem;
+
+  pollActionStatus = defaultPollActionStatus;
 
   async fetchIncident(id: string): Promise<Incident> {
     const { data } = await axios.get(`${this.endpoint}/incidents/${id}`, {

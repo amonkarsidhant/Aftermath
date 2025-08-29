@@ -1,5 +1,15 @@
 import axios from 'axios';
-import { Integration, Incident, Action, ActionResponse, TimelineEvent } from './types';
+import {
+  Integration,
+  Incident,
+  Action,
+  ActionResponse,
+  TimelineEvent,
+  PostmortemSummary,
+  ActionStatusUpdate,
+  defaultPushPostmortem,
+  defaultPollActionStatus,
+} from './types';
 
 export class SlackIntegration implements Integration {
   private endpoint: string;
@@ -9,6 +19,10 @@ export class SlackIntegration implements Integration {
     this.endpoint = process.env.SLACK_ENDPOINT ?? 'https://slack.com/api';
     this.token = process.env.SLACK_TOKEN ?? 'dummy-token';
   }
+
+  pushPostmortem = defaultPushPostmortem;
+
+  pollActionStatus = defaultPollActionStatus;
 
   async fetchIncident(id: string): Promise<Incident> {
     const { data } = await axios.get(`${this.endpoint}/incidents/${id}`, {

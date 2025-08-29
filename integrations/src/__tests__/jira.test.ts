@@ -81,6 +81,11 @@ describe('JiraIntegration', () => {
     delete process.env.JIRA_TOKEN;
   });
 
+  it('pushPostmortem returns default response', async () => {
+    const result = await integration.pushPostmortem('100', { summary: 'n/a' });
+    expect(result).toEqual({ success: false, message: 'Not supported' });
+  });
+
   it('pollActionStatus emits updates and persists them', async () => {
     const first = {
       fields: {
