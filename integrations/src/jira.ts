@@ -6,6 +6,8 @@ import {
   ActionResponse,
   TimelineEvent,
   ActionStatusUpdate,
+  PostmortemSummary,
+  defaultPushPostmortem,
 } from './types';
 import { ActionStatusRepository, defaultStatusRepository } from './statusRepository';
 
@@ -24,6 +26,8 @@ export class JiraIntegration implements Integration {
     this.statusRepo = statusRepo;
     this.pollInterval = pollInterval;
   }
+
+  pushPostmortem = defaultPushPostmortem;
 
   async fetchIncident(id: string): Promise<Incident> {
     const { data } = await axios.get(`${this.endpoint}/incidents/${id}`, {

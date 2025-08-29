@@ -6,6 +6,8 @@ import {
   ActionResponse,
   TimelineEvent,
   PostmortemSummary,
+  ActionStatusUpdate,
+  defaultPollActionStatus,
 } from './types';
 
 export class ServiceNowIntegration implements Integration {
@@ -16,6 +18,8 @@ export class ServiceNowIntegration implements Integration {
     this.endpoint = process.env.SERVICENOW_ENDPOINT ?? 'https://example.service-now.com';
     this.token = process.env.SERVICENOW_TOKEN ?? 'dummy-token';
   }
+
+  pollActionStatus = defaultPollActionStatus;
 
   async fetchIncident(id: string): Promise<Incident> {
     const { data } = await axios.get(`${this.endpoint}/incidents/${id}`, {

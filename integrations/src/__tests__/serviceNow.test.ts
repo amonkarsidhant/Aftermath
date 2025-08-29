@@ -47,6 +47,12 @@ describe('ServiceNowIntegration', () => {
     expect(scope.isDone()).toBe(true);
   });
 
+  it('pollActionStatus yields no updates', async () => {
+    const iterator = integration.pollActionStatus('action');
+    const { done } = await iterator.next();
+    expect(done).toBe(true);
+  });
+
   it('fetchEvents retrieves events', async () => {
     const start = new Date('2023-01-01T00:00:00Z');
     const end = new Date('2023-01-02T00:00:00Z');
